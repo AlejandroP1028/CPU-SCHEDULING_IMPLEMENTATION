@@ -2,9 +2,9 @@ from task import Task
 from algoUtil import algoUtil
 from algorithm import Algorithm
 
-tasks = []
-
 if __name__ == '__main__':
+    tasks = []
+    
     task1 = Task('A', 2, 8)
     task2 = Task('B', 0, 9)
     task3 = Task('C', 3, 12)

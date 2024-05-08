@@ -15,3 +15,4 @@ CPU Burst: {self.cpuBurst}
         return self.__str__()
     
 if __name__ == '__main__':
+    pass
