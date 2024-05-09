@@ -1,43 +1,76 @@
 
 class Algorithm:
-    def fcfs(self, taskList):
-        qu = []
-        currentTask = '' 
-        taskList = sorted(taskList, key=lambda x: x.arrivalTime)
-        copyTL = taskList
-        while taskList:
-            counter = 0
-            for task in taskList:
-                currentTask = task.id
-                currentTask
-                task.timeExecuted.append(counter)
-                for i in range(task.cpuBurst):
-                    
-                    counter += 1
-                task.shift.append(counter) 
-                taskList.pop(0)
+    def fcfs(self, task_list):
+        counter = 0
+        queue = []
+        current_task = None
+        finished_tasks = []
+        task_list = sorted(task_list, key=lambda x: x.arrival_time)
+        copy_task_list = task_list[:]
 
-        return self.gantPrinter(taskList)
-    
-    def gantPrinter(self,taskList):
-        gantString = ""
-        for task in taskList:
-            taskString = f"|"
-            for i in range(task.cpuBurst):
-                if i == task.cpuBurst // 2:
-                    taskString += f"{task.id}"
-                taskString += "-"
-            taskString += "|"
-            gantString += taskString
+        while len(finished_tasks) != len(task_list):
+            if copy_task_list:
+                queue, copy_task_list = self.add_to_queue(copy_task_list, counter, queue)
+
+            if queue:
+                if self.check_current_task(queue, counter) and not current_task:
+                    current_task = queue.pop(0)
+                    current_task.time_executed = counter
+
+            if current_task:
+                current_task.cpu_burst_needed -= 1
+                current_task, finished_tasks = self.check_finished_task(current_task, finished_tasks, counter)
+
+            counter += 1  # Increment counter regardless of tasks
+
+        print([task.id for task in finished_tasks])
+
+        for task in finished_tasks:
+            print(task)
+        print([(task.id, task.cpu_burst) for task in task_list])
+
+        self.gant_printer(task_list)
+
+    def add_to_queue(self, task_list, counter, queue):
+        if task_list[0].arrival_time == counter:
+            task_list[0].time_executed = counter
+            queue.append(task_list[0])
+            task_list.pop(0)
+        return queue, task_list
+
+    def check_current_task(self, queue, counter):
+        if queue and queue[0].arrival_time <= counter:
+            return True
+        return False
+
+    def check_finished_task(self, current_task, finished_tasks, counter):
+        if current_task.cpu_burst_needed == 0:
+            current_task.shift.append(counter + 1)
+            finished_tasks.append(current_task)
+            current_task = None
+
+        return current_task, finished_tasks
+
+
+    def gant_printer(self,task_list):
+        gant_string = ""
+        for task in task_list:
+            task_string = f"|"
+            for i in range(task.cpu_burst):
+                if i == task.cpu_burst // 2:
+                    task_string += f"{task.id}"
+                task_string += "-"
+            task_string += "|"
+            gant_string += task_string
         
-        return gantString
+        print(gant_string)
     
         
 class algoUtil:
     def getTotalBurst(self,taskList):
         totalBurst = 0
         for task in taskList:
-            totalBurst += task.cpuBurst
+            totalBurst += task.cpu_burst
         return totalBurst
     
     def taskWaitingTime(self, waitingT,arrivalT):
@@ -53,29 +86,32 @@ class algoUtil:
 
 class Task:
     tasks = []
-    def __init__(self, id: str, arrivalTime: int, cpuBurst: int) -> None:
+
+    def __init__(self, id: str, arrival_time: int, cpu_burst: int) -> None:
         self.id = id
-        self.arrivalTime = arrivalTime
-        self.cpuBurst = cpuBurst
-        #time when executed can be 1 or many depending on the process
-        #preemptive only has 1 non-preemptive has 1 or more
-        self.timeExecuted = []
-        #time shifted value can be 1 or more depending on the process 
-        #preemptive only has 1 non-preemptive has 1 or more
-        self.shift = []
+        self.arrival_time = arrival_time
+        self.cpu_burst = cpu_burst
+        self.cpu_burst_needed = cpu_burst
+        self.time_executed = []  # Time when executed can be 1 or many depending on the process
+        self.shift = []  # Time shifted value can be 1 or more depending on the process
         self.priority = 0
 
-    def addTimeExecuted(self,T):
-        self.timeExecuted.append(T)
-        
-    def addShift(self,T):
-        self.shift.append(T)
+    def add_time_executed(self, t):
+        self.time_executed.append(t)
+
+    def add_shift(self, t):
+        self.shift.append(t)
 
     def __str__(self) -> str:
-        return f"""ID: {self.id}
-Arrival Time: {self.arrivalTime}
-CPU Burst: {self.cpuBurst}
+            return f"""ID: {self.id}
+Arrival Time: {self.arrival_time}
+CPU Burst: {self.cpu_burst}
+CPU Burst Needed: {self.cpu_burst_needed}
+Time Executed: {self.time_executed}
+Time Shifted: {self.shift}
 """
+
+       
     
     def __repr__(self) -> str:
         return self.__str__()
@@ -84,16 +120,14 @@ CPU Burst: {self.cpuBurst}
 if __name__ == '__main__':
     tasks = []
     
-    task1 = Task('A', 2, 8)
-    task2 = Task('B', 0, 9)
-    task3 = Task('C', 3, 12)
-    task4 = Task('D', 5, 13)
+    task1 = Task('A', 0, 8)
+    task2 = Task('B', 3, 4)
+    task3 = Task('C', 4, 5)
+    task4 = Task('D', 6, 3)
+    task5 = Task('E', 10, 2)
 
-    tasks.extend([task1,task2,task3,task4])
+    tasks.extend([task1,task2,task3,task4,task5])
     algo = Algorithm()
     aUtil = algoUtil()
 
-    fcfs_task = algo.fcfs(tasks)
-    for task in tasks:
-        print(task)
-    print(fcfs_task)
+    algo.fcfs(tasks)
