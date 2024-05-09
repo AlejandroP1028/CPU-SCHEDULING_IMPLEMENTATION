@@ -1,5 +1,10 @@
 # CPU-SCHEDULING_IMPLEMENTATION
 
+## Notes
+
+- Be mindful of naming conventions, to be uniform we will be using snake case. Example: shabu_dealers
+- Type hints good very very helpful
+
 ## Phases
 
 1. Python Implementation of CPU Scheduling Algorithms
@@ -10,4 +15,6 @@
 
 ## Current Phase: 1
 
-FCFS Sort done</br> Current task is to implement the waiting and turnaround time for each task including the average waiting time and average turnaround time of the inputted set of tasks </br>
+FCFS Sort done</br>
+Turnaround and Waiting Time done</br>
+Reuse modules for SPF and Round Robin</br>
