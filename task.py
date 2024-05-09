@@ -10,13 +10,14 @@ class Task:
         #time shifted value can be 1 or more depending on the process 
         #preemptive only has 1 non-preemptive has 1 or more
         self.shift = []
+        self.priority = 0
 
     def addTimeExecuted(self,T):
         self.timeExecuted.append(T)
         
     def addShift(self,T):
         self.shift.append(T)
-        
+
     def __str__(self) -> str:
         return f"""ID: {self.id}
 Arrival Time: {self.arrivalTime}
