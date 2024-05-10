@@ -33,12 +33,6 @@ class Task:
         self.waiting_time:int = 0
         self.turnaround_time:int = 0
 
-    def add_time_executed(self, t):
-        self.time_executed.append(t)
-
-    def add_shift(self, t):
-        self.shift.append(t)
-
     def __str__(self) -> str:
             return f"""ID: {self.id}
 Arrival Time: {self.arrival_time}
@@ -148,10 +142,8 @@ if __name__ == '__main__':
     task1 = Task('A', 0, 8)
     task2 = Task('B', 3, 4)
     task3 = Task('C', 4, 5)
-    task4 = Task('D', 6, 3)
-    task5 = Task('E', 10, 2)
 
-    tasks.extend([task1,task2,task3,task4,task5])
+    tasks.extend([task1,task2,task3])
     algo = Algorithm()
 
     algo.fcfs(tasks)
