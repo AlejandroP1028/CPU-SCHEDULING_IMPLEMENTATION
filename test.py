@@ -102,24 +102,23 @@ class Algorithm():
                 queue, copy_task_list = self.add_to_queue(copy_task_list, counter, queue)
 
             if queue:
-                if self.check_current_task(queue, counter) and not current_task:
+                if self.check_first_in_q(queue, counter) and not current_task:
                     current_task = queue.pop(0)
                     current_task.time_executed.append(counter)
                     current_task.waiting_time = self.util.task_waiting_time(counter,current_task.arrival_time)
 
             if current_task:
                 current_task.cpu_burst_needed -= 1
-                current_task, finished_tasks = self.check_finished_task(current_task, finished_tasks, counter)
+                current_task, finished_tasks = self.process_finished_task(current_task, finished_tasks, counter)
 
             counter += 1  # Increment counter regardless of tasks
 
-        self.printer.gant_printer(task_list)
+        self.printer.gant_printer(finished_tasks)
         self.printer.turnaround_printer(finished_tasks)
         self.printer.waiting_time_printer(finished_tasks)
 
-
-
     def spf(self, task_list):
+        print("spf")
         counter = 0
         queue = []
         current_task:Task = None
@@ -127,10 +126,33 @@ class Algorithm():
         task_list = sorted(task_list, key=lambda x: x.arrival_time)
         copy_task_list = task_list[:]
 
-        while len(finished_tasks) != len(task_list):
-            #if there are still tasks in task list append it to queue if the first arrival time == is equal to the counter
+        while len(finished_tasks) != len(task_list) and counter < 50:
+
+            #if there are still tasks in task list append it to queue if the first index of the task_list.arrival time == is equal to the counter
             if  copy_task_list:
                 queue, copy_task_list = self.add_to_queue(copy_task_list,counter, queue)
+
+            #if queue has tasks
+            if queue:
+                #check our current task
+                #sort our queue by cpu burst
+                queue = sorted(queue, key=lambda x: x.cpu_burst)
+
+                #check first in q and if we dont have a current task if both are true
+                if not current_task:
+                    #current task will be the first in q then change task attributes
+                    current_task = queue.pop(0)
+                    current_task.time_executed.append(counter)
+                    current_task.waiting_time = self.util.task_waiting_time(counter,current_task.arrival_time)
+
+            if current_task:
+                current_task.cpu_burst_needed -= 1
+                current_task, finished_tasks = self.process_finished_task(current_task, finished_tasks, counter)
+
+            counter += 1  # Increment counter regardless of tasks
+        self.printer.gant_printer(finished_tasks)
+        self.printer.turnaround_printer(finished_tasks)
+        self.printer.waiting_time_printer(finished_tasks)
 
             
     def add_to_queue(self, task_list: list[Task], counter, queue: list[Task]):
@@ -140,12 +162,12 @@ class Algorithm():
             task_list.pop(0)
         return queue, task_list
 
-    def check_current_task(self, queue: list[Task], counter):
+    def check_first_in_q(self, queue: list[Task], counter):
         if queue and queue[0].arrival_time <= counter:
             return True
         return False
 
-    def check_finished_task(self, current_task: Task, finished_tasks: list[Task], counter):
+    def process_finished_task(self, current_task: Task, finished_tasks: list[Task], counter):
         if current_task.cpu_burst_needed == 0:
             current_task.shift.append(counter + 1)
             current_task.turnaround_time = self.util.task_turnaround_time(counter+1,current_task.arrival_time)
@@ -159,11 +181,12 @@ class Algorithm():
 if __name__ == '__main__':
     tasks = []
     
-    task1 = Task('A', 0, 8)
-    task2 = Task('B', 3, 4)
-    task3 = Task('C', 4, 5)
-
-    tasks.extend([task1,task2,task3])
+    task1 = Task('A', 0, 4)
+    task2 = Task('B', 3, 10)
+    task3 = Task('C', 4, 2)
+    task4 = Task('D', 8, 14)
+    task5 = Task('E', 5, 10)
+    tasks.extend([task1,task2,task3,task4,task5])
     algo = Algorithm()
 
     algo.fcfs(tasks)
