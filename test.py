@@ -53,19 +53,14 @@ Turnaround Time: {self.turnaround_time}
 
 class algo_printer:
     util = algo_util()
-    def gant_printer(self,task_list: list[Task]):
+    def gant_printer(self,gant_string):
+        final_string: str = ""
+        current_char: str = None
+        current_char_count = 0
+       
 
-        gant_string = ""
-        for task in task_list:
-            task_string = f"|"
-            for i in range(task.cpu_burst):
-                if i == task.cpu_burst // 2:
-                    task_string += f"{task.id}"
-                task_string += "-"
-            task_string += "|"
-            gant_string += task_string
         
-        print(gant_string)
+        print(final_string)
 
     def turnaround_printer(self,task_list:list[Task]):
         turnaround_list = []
@@ -174,73 +169,59 @@ class Algorithm():
 
         #revert cpu burst needed
         self.revert_cpu_burst(task_list)
-    def srtf(self,task_list):
-        
+    def srtf(self, task_list):
         counter = 0
-        c_shortest: Task = None
         queue = []
-        gant_string: str = ""
-        current_task:Task = None
+        gant_string = ""
+        current_task = None
         finished_tasks = []
-        task_list:list[Task] = sorted(task_list, key=lambda x: x.arrival_time)
+        task_list = sorted(task_list, key=lambda x: x.arrival_time)
         copy_task_list = task_list[:]
 
         while len(finished_tasks) != len(task_list) and counter < 50:
-            print(counter)
-            print(current_task)
-            
+            if copy_task_list:
+                queue, copy_task_list = self.add_to_queue(copy_task_list, counter, queue)
 
-            #if there are still tasks in task list append it to queue if the first index of the task_list.arrival time == is equal to the counter
-            if  copy_task_list:
-                queue, copy_task_list = self.add_to_queue(copy_task_list,counter, queue)
-
-
-            
-            #if queue has tasks
             if queue:
-                queue = sorted(queue,key=lambda x: x.cpu_burst_needed)
+                queue = sorted(queue, key=lambda x: x.cpu_burst_needed)
                 c_shortest = queue[0]
-                #if we dont have a current task then we pop the first in queue then update the shortest
-                if not current_task:
-                    #current task will be the first in q then change task attributes
+
+                if not current_task or c_shortest.cpu_burst_needed < current_task.cpu_burst_needed:
+                    if current_task:
+                        current_task.shift.append(counter)
+                        queue.append(current_task)
                     current_task = queue.pop(0)
                     current_task.time_executed.append(counter)
-                    c_shortest = queue[0] if queue else None
 
-                if c_shortest and c_shortest.cpu_burst_needed < current_task.cpu_burst_needed:
-                    queue.append(current_task)
-                    current_task.shift.append(counter)
-                    current_task = c_shortest
-                    current_task.time_executed.append(counter)
-                    queue = sorted(queue,key=lambda x: x.cpu_burst_needed)
-                    c_shortest = queue[0]
-
-                
-            
             if current_task:
                 gant_string += current_task.id
                 current_task.cpu_burst_needed -= 1
-                current_task, finished_tasks = self.process_finished_task(current_task, finished_tasks, counter)
+
+                if current_task.cpu_burst_needed <= 0:
+                    current_task.shift.append(counter + 1)
+                    current_task.turnaround_time = self.util.task_turnaround_time(counter + 1, current_task.arrival_time)
+                    finished_tasks.append(current_task)
+                    current_task = None
 
             else:
                 gant_string += "-"
 
-            counter += 1  # Increment counter regardless of tasks
-
+            counter += 1
 
         print(gant_string)
         self.printer.gant_printer(finished_tasks)
+
         
     def revert_cpu_burst(self,task_list: list[Task]):
         for task in task_list:
             task.cpu_burst_needed = task.cpu_burst
             
-    def add_to_queue(self, task_list: list[Task], counter, queue: list[Task]):
+    def add_to_queue(self, task_list, counter, queue):
         if task_list[0].arrival_time == counter:
             task_list[0].time_executed.append(counter)
             queue.append(task_list[0])
             task_list.pop(0)
-        return queue, task_list
+        return queue, task_list 
 
     def check_first_in_q(self, queue: list[Task], counter):
         if queue and queue[0].arrival_time <= counter:
