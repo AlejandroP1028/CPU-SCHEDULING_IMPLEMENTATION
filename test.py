@@ -128,8 +128,11 @@ class Algorithm():
         copy_task_list = task_list[:]
 
         while len(finished_tasks) != len(task_list):
+            #if there are still tasks in task list append it to queue if the first arrival time == is equal to the counter
             if  copy_task_list:
                 queue, copy_task_list = self.add_to_queue(copy_task_list,counter, queue)
+
+            
     def add_to_queue(self, task_list: list[Task], counter, queue: list[Task]):
         if task_list[0].arrival_time == counter:
             task_list[0].time_executed.append(counter)
