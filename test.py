@@ -1,5 +1,5 @@
 #fcfs done
-#spf in progress
+#spf in done
 
 
 class algo_util:
@@ -54,6 +54,7 @@ Turnaround Time: {self.turnaround_time}
 class algo_printer:
     util = algo_util()
     def gant_printer(self,task_list: list[Task]):
+
         gant_string = ""
         for task in task_list:
             task_string = f"|"
@@ -116,14 +117,16 @@ class Algorithm():
         self.printer.gant_printer(finished_tasks)
         self.printer.turnaround_printer(finished_tasks)
         self.printer.waiting_time_printer(finished_tasks)
+        #revert cpu burst needed
 
+        self.revert_cpu_burst(task_list)
     def spf(self, task_list):
         print("spf")
         counter = 0
         queue = []
         current_task:Task = None
         finished_tasks = []
-        task_list = sorted(task_list, key=lambda x: x.arrival_time)
+        task_list:list[Task] = sorted(task_list, key=lambda x: x.arrival_time)
         copy_task_list = task_list[:]
 
         while len(finished_tasks) != len(task_list) and counter < 50:
@@ -150,10 +153,18 @@ class Algorithm():
                 current_task, finished_tasks = self.process_finished_task(current_task, finished_tasks, counter)
 
             counter += 1  # Increment counter regardless of tasks
+
+
         self.printer.gant_printer(finished_tasks)
         self.printer.turnaround_printer(finished_tasks)
         self.printer.waiting_time_printer(finished_tasks)
 
+        #revert cpu burst needed
+        self.revert_cpu_burst(task_list)
+
+    def revert_cpu_burst(self,task_list: list[Task]):
+        for task in task_list:
+            task.cpu_burst_needed = task.cpu_burst
             
     def add_to_queue(self, task_list: list[Task], counter, queue: list[Task]):
         if task_list[0].arrival_time == counter:
@@ -190,3 +201,4 @@ if __name__ == '__main__':
     algo = Algorithm()
 
     algo.fcfs(tasks)
+    algo.spf(tasks)

@@ -16,5 +16,6 @@
 ## Current Phase: 1
 
 FCFS Sort done</br>
+SPF Sort done</br>
 Turnaround and Waiting Time done</br>
 Reuse modules for SPF and Round Robin</br>
