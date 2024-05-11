@@ -136,7 +136,7 @@ class Algorithm():
         task_list:list[Task] = sorted(task_list, key=lambda x: x.arrival_time)
         copy_task_list = task_list[:]
 
-        while len(finished_tasks) != len(task_list) and counter < 50:
+        while len(finished_tasks) != len(task_list):
 
             #if there are still tasks in task list append it to queue if the first index of the task_list.arrival time == is equal to the counter
             if  copy_task_list:
@@ -174,7 +174,63 @@ class Algorithm():
 
         #revert cpu burst needed
         self.revert_cpu_burst(task_list)
+    def srtf(self,task_list):
+        
+        counter = 0
+        c_shortest: Task = None
+        queue = []
+        gant_string: str = ""
+        current_task:Task = None
+        finished_tasks = []
+        task_list:list[Task] = sorted(task_list, key=lambda x: x.arrival_time)
+        copy_task_list = task_list[:]
 
+        while len(finished_tasks) != len(task_list) and counter < 50:
+            print(counter)
+            print(current_task)
+            
+
+            #if there are still tasks in task list append it to queue if the first index of the task_list.arrival time == is equal to the counter
+            if  copy_task_list:
+                queue, copy_task_list = self.add_to_queue(copy_task_list,counter, queue)
+
+
+            
+            #if queue has tasks
+            if queue:
+                queue = sorted(queue,key=lambda x: x.cpu_burst_needed)
+                c_shortest = queue[0]
+                #if we dont have a current task then we pop the first in queue then update the shortest
+                if not current_task:
+                    #current task will be the first in q then change task attributes
+                    current_task = queue.pop(0)
+                    current_task.time_executed.append(counter)
+                    c_shortest = queue[0] if queue else None
+
+                if c_shortest and c_shortest.cpu_burst_needed < current_task.cpu_burst_needed:
+                    queue.append(current_task)
+                    current_task.shift.append(counter)
+                    current_task = c_shortest
+                    current_task.time_executed.append(counter)
+                    queue = sorted(queue,key=lambda x: x.cpu_burst_needed)
+                    c_shortest = queue[0]
+
+                
+            
+            if current_task:
+                gant_string += current_task.id
+                current_task.cpu_burst_needed -= 1
+                current_task, finished_tasks = self.process_finished_task(current_task, finished_tasks, counter)
+
+            else:
+                gant_string += "-"
+
+            counter += 1  # Increment counter regardless of tasks
+
+
+        print(gant_string)
+        self.printer.gant_printer(finished_tasks)
+        
     def revert_cpu_burst(self,task_list: list[Task]):
         for task in task_list:
             task.cpu_burst_needed = task.cpu_burst
@@ -207,11 +263,10 @@ if __name__ == '__main__':
     
     task1 = Task('A', 0, 4)
     task2 = Task('B', 6, 2)
-    task3 = Task('C', 7, 5)
-    task4 = Task('D', 8, 14)
-    task5 = Task('E', 9, 10)
+    task3 = Task('C', 8, 5)
+    task4 = Task('D', 9, 15)
+    task5 = Task('E', 10, 2)
     tasks.extend([task1,task2,task3,task4,task5])
     algo = Algorithm()
 
-    algo.fcfs(tasks)
-    algo.spf(tasks)
+    algo.srtf(tasks)
