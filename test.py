@@ -120,7 +120,7 @@ class Algorithm():
 
             counter += 1  # Increment counter regardless of tasks
             
-
+        print(gant_string)
         self.printer.gant_printer(finished_tasks)
         self.printer.turnaround_printer(finished_tasks)
         self.printer.waiting_time_printer(finished_tasks)
@@ -130,6 +130,7 @@ class Algorithm():
     def spf(self, task_list):
         counter = 0
         queue = []
+        gant_string: str = ""
         current_task:Task = None
         finished_tasks = []
         task_list:list[Task] = sorted(task_list, key=lambda x: x.arrival_time)
@@ -154,13 +155,19 @@ class Algorithm():
                     current_task.time_executed.append(counter)
                     current_task.waiting_time = self.util.task_waiting_time(counter,current_task.arrival_time)
 
+            
             if current_task:
+                gant_string += current_task.id
                 current_task.cpu_burst_needed -= 1
                 current_task, finished_tasks = self.process_finished_task(current_task, finished_tasks, counter)
+
+            else:
+                gant_string += "-"
 
             counter += 1  # Increment counter regardless of tasks
 
 
+        print(gant_string)
         self.printer.gant_printer(finished_tasks)
         self.printer.turnaround_printer(finished_tasks)
         self.printer.waiting_time_printer(finished_tasks)
@@ -199,8 +206,8 @@ if __name__ == '__main__':
     tasks = []
     
     task1 = Task('A', 0, 4)
-    task2 = Task('B', 6, 10)
-    task3 = Task('C', 7, 2)
+    task2 = Task('B', 6, 2)
+    task3 = Task('C', 7, 5)
     task4 = Task('D', 8, 14)
     task5 = Task('E', 9, 10)
     tasks.extend([task1,task2,task3,task4,task5])
