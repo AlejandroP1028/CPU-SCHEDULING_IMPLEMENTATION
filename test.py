@@ -1,3 +1,7 @@
+#fcfs done
+#spf in progress
+
+
 class algo_util:
     def get_total_burst(self,task_list):
         total_burst = 0
@@ -113,6 +117,19 @@ class Algorithm():
         self.printer.turnaround_printer(finished_tasks)
         self.printer.waiting_time_printer(finished_tasks)
 
+
+
+    def spf(self, task_list):
+        counter = 0
+        queue = []
+        current_task:Task = None
+        finished_tasks = []
+        task_list = sorted(task_list, key=lambda x: x.arrival_time)
+        copy_task_list = task_list[:]
+
+        while len(finished_tasks) != len(task_list):
+            if  copy_task_list:
+                queue, copy_task_list = self.add_to_queue(copy_task_list,counter, queue)
     def add_to_queue(self, task_list: list[Task], counter, queue: list[Task]):
         if task_list[0].arrival_time == counter:
             task_list[0].time_executed.append(counter)
