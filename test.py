@@ -1,5 +1,3 @@
-#fcfs done
-#spf in done
 
 
 class algo_util:
@@ -208,7 +206,7 @@ class Algorithm():
         task_list = sorted(task_list, key=lambda x: x.arrival_time)
         copy_task_list = task_list[:]
 
-        while len(finished_tasks) != len(task_list) and counter < 50:
+        while len(finished_tasks) != len(task_list):
             if copy_task_list:
                 queue, copy_task_list = self.add_to_queue(copy_task_list, counter, queue)
 
