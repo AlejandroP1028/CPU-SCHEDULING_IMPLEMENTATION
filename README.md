@@ -17,5 +17,7 @@
 
 FCFS Sort done</br>
 SPF Sort done</br>
+SRTF Sort done</br>
 Turnaround and Waiting Time done</br>
-Reuse modules for SPF and Round Robin</br>
+Reuse modules for SPF and SRTF</br>
+Testing and Bug fixing </br>
