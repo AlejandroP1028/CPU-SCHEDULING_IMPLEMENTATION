@@ -284,6 +284,5 @@ if __name__ == '__main__':
     task5 = Task('E', 10, 2)
     tasks.extend([task1,task2,task3,task4,task5])
     algo = Algorithm()
-    algo_u = algo_printer()
 
     algo.fcfs(tasks)
