@@ -275,12 +275,12 @@ class Algorithm():
 if __name__ == '__main__':
     tasks = []
     
-    task1 = Task('A', 0, 8)
-    task2 = Task('B', 3, 4)
-    task3 = Task('C', 4, 5)
-    task4 = Task('D', 6, 3)
-    task5 = Task('E', 10, 2)
+    task1 = Task('A', 2, 11)
+    task2 = Task('B', 3, 8)
+    task3 = Task('C', 9, 10)
+    task4 = Task('D', 7, 3)
+    task5 = Task('E', 5, 2)
     tasks.extend([task1,task2,task3,task4,task5])
     algo = Algorithm()
 
-    algo.fcfs(tasks)
+    algo.srtf(tasks)
