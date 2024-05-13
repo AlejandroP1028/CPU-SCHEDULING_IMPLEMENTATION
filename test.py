@@ -255,11 +255,12 @@ class Algorithm():
             task.cpu_burst_needed = task.cpu_burst
             
     def add_to_queue(self, task_list, counter, queue):
-        if task_list[0].arrival_time <= counter:
-            queue.append(task_list[0])
-            task_list.pop(0)
-        return queue, task_list 
-
+        added_tasks = []
+        while task_list and task_list[0].arrival_time == counter:
+            added_tasks.append(task_list.pop(0))
+        if added_tasks:
+            queue.extend(added_tasks)
+        return queue, task_list
     def check_first_in_q(self, queue: list[Task], counter):
         if queue and queue[0].arrival_time <= counter:
             return True
