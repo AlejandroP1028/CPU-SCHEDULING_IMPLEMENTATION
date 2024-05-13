@@ -221,7 +221,8 @@ class Algorithm():
                     current_task = queue.pop(0)
                     current_task.time_executed.append(counter)
                     if len(current_task.time_executed) > 1:
-                        current_task.waiting_time = current_task.waiting_time + (current_task.time_executed[-1] - current_task.shift[0])
+                        waiting_time_y = current_task.time_executed[-1] - current_task.shift[-1]
+                        current_task.waiting_time = current_task.waiting_time + waiting_time_y
                     else:
                         current_task.waiting_time = self.util.task_waiting_time(counter,current_task.arrival_time)
 
@@ -240,12 +241,13 @@ class Algorithm():
 
             counter += 1
 
+        for task in task_list:
+            print(task)
         self.printer.gant_printer(gant_string)
         self.printer.turnaround_printer(task_list)
         self.printer.waiting_time_printer(task_list)
         self.revert_cpu_burst(task_list)
 
-        
     def revert_cpu_burst(self,task_list: list[Task]):
         for task in task_list:
             task.cpu_burst_needed = task.cpu_burst
@@ -274,13 +276,14 @@ class Algorithm():
 
 if __name__ == '__main__':
     tasks = []
-    
+
     task1 = Task('A', 2, 11)
     task2 = Task('B', 3, 8)
     task3 = Task('C', 9, 10)
     task4 = Task('D', 7, 3)
     task5 = Task('E', 5, 2)
-    tasks.extend([task1,task2,task3,task4,task5])
+    task6 = Task('F', 10, 3)
+    tasks.extend([task1, task2, task3, task4, task5, task6])
     algo = Algorithm()
 
     algo.srtf(tasks)
