@@ -206,7 +206,7 @@ class Algorithm():
         task_list = sorted(task_list, key=lambda x: x.arrival_time)
         copy_task_list = task_list[:]
 
-        while len(finished_tasks) != len(task_list):
+        while len(finished_tasks) != len(task_list) and counter < 50:
             if copy_task_list:
                 queue, copy_task_list = self.add_to_queue(copy_task_list, counter, queue)
 
@@ -240,9 +240,11 @@ class Algorithm():
                 gant_string += "-"
 
             counter += 1
+            print(counter)
+            print([task.id for task in copy_task_list])
+            print([task.id for task in queue])
+            print([task.id for task in finished_tasks])
 
-        for task in task_list:
-            print(task)
         self.printer.gant_printer(gant_string)
         self.printer.turnaround_printer(task_list)
         self.printer.waiting_time_printer(task_list)
@@ -253,11 +255,12 @@ class Algorithm():
             task.cpu_burst_needed = task.cpu_burst
             
     def add_to_queue(self, task_list, counter, queue):
-        if task_list[0].arrival_time == counter:
-            queue.append(task_list[0])
-            task_list.pop(0)
-        return queue, task_list 
-
+        added_tasks = []
+        while task_list and task_list[0].arrival_time == counter:
+            added_tasks.append(task_list.pop(0))
+        if added_tasks:
+            queue.extend(added_tasks)
+        return queue, task_list
     def check_first_in_q(self, queue: list[Task], counter):
         if queue and queue[0].arrival_time <= counter:
             return True
@@ -276,12 +279,12 @@ class Algorithm():
 
 if __name__ == '__main__':
     tasks = []
-
+     
     task1 = Task('A', 2, 11)
     task2 = Task('B', 3, 8)
-    task3 = Task('C', 9, 10)
+    task3 = Task('C', 10, 12)
     task4 = Task('D', 7, 3)
-    task5 = Task('E', 5, 2)
+    task5 = Task('E', 10, 11)
     task6 = Task('F', 10, 3)
     tasks.extend([task1, task2, task3, task4, task5, task6])
     algo = Algorithm()
