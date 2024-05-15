@@ -1,4 +1,10 @@
+# bug 1: if arrival time of multiple tasks is the same only one will go into the queue resulting in an infinite loop
+# solution: change add_to_queue implementation to not check for only one task but loop through all the tasks in the task list
+# status: resolved
 
+# bug 2: if id of task is more than 1 the printer would go wild
+# solution: limit id of task to 1 character
+# status: not yet resolved
 class algo_util:
     def get_total_burst(self ,task_list):
         total_burst = 0
@@ -277,6 +283,8 @@ class Algorithm():
 
 if __name__ == '__main__':
     tasks = []
+    algo = Algorithm()
+    algoU = algo_util()
 
     num_tasks = int(input("Enter the number of tasks: "))
     for i in range(num_tasks):
@@ -285,8 +293,6 @@ if __name__ == '__main__':
         cpu_burst = int(input(f"Enter CPU burst for task {id}: "))
         task = Task(id, arrival_time, cpu_burst)
         tasks.append(task)
-
-    algo = Algorithm()
 
     while True:
         choice = input("Choose algorithm: \n1. FCFS\n2. SPF\n3. SRTF\nEnter choice (1/2/3): ")
