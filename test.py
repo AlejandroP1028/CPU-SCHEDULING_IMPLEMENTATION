@@ -5,6 +5,8 @@
 # bug 2: if id of task is more than 1 the printer would go wild
 # solution: limit id of task to 1 character
 # status: resolved 
+
+
 class algo_util:
     def get_total_burst(self, task_list):
         total_burst = 0
