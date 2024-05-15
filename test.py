@@ -1,25 +1,30 @@
+# bug 1: if arrival time of multiple tasks is the same only one will go into the queue resulting in an infinite loop
+# solution: change add_to_queue implementation to not check for only one task but loop through all the tasks in the task list
+# status: resolved
 
-
+# bug 2: if id of task is more than 1 the printer would go wild
+# solution: limit id of task to 1 character
+# status: not yet resolved
 class algo_util:
-    def get_total_burst(self,task_list):
+    def get_total_burst(self ,task_list):
         total_burst = 0
         for task in task_list:
             total_burst += task.cpu_burst
         return total_burst
-    
-    def task_waiting_time(self, time_executed,arrival_time):
-        #waiting time = time executed - arrival time
+
+    def task_waiting_time(self, time_executed ,arrival_time):
+        # waiting time = time executed - arrival time
         return time_executed - arrival_time
-    
-    def task_turnaround_time(self,time_of_completion,arrival_time):
-        #time of completion - arrival time
+
+    def task_turnaround_time(self ,time_of_completion ,arrival_time):
+        # time of completion - arrival time
         return time_of_completion - arrival_time
 
-    def avg(self,list):
+    def avg(self ,list):
         num = 0
         for i in list:
             num += i
-        return num/len(list)
+        return num /len(list)
 
 class Task:
     tasks = []
@@ -29,13 +34,13 @@ class Task:
         self.arrival_time = arrival_time
         self.cpu_burst = cpu_burst
         self.cpu_burst_needed = cpu_burst
-        self.waiting_time:int = 0
-        self.turnaround_time:int = 0
+        self.waiting_time :int = 0
+        self.turnaround_time :int = 0
         self.time_executed: list[int] = []  # Time when executed can be 1 or many depending on the process
         self.shift: list[int] = []  # Time shifted value can be 1 or more depending on the process
 
     def __str__(self) -> str:
-            return f"""ID: {self.id}
+        return f"""ID: {self.id}
 Arrival Time: {self.arrival_time}
 CPU Burst: {self.cpu_burst}
 CPU Burst Needed: {self.cpu_burst_needed}
@@ -45,8 +50,8 @@ Time Executed: {self.time_executed}
 Time Shifted: {self.shift}
 """
 
-       
-    
+
+
     def __repr__(self) -> str:
         return self.__str__()
 
@@ -96,7 +101,7 @@ class algo_printer:
         final_string += "|"
         print(final_string)
 
-    def turnaround_printer(self,task_list:list[Task]):
+    def turnaround_printer(self ,task_list :list[Task]):
         turnaround_list = []
         turnaround_str = "Turnaround Time:\n"
         for task in task_list:
@@ -106,7 +111,7 @@ class algo_printer:
         turnaround_str += f"Average TA: {self.util.avg(turnaround_list)}ms"
         print(turnaround_str)
 
-    def waiting_time_printer(self,task_list:list[Task]):
+    def waiting_time_printer(self ,task_list :list[Task]):
         waiting_time = []
         waiting_time_str = "Waiting Time:\n"
         for task in task_list:
@@ -123,7 +128,7 @@ class Algorithm():
         counter = 0
         queue = []
         gant_string: str = ""
-        current_task:Task = None
+        current_task :Task = None
         finished_tasks = []
         task_list = sorted(task_list, key=lambda x: x.arrival_time)
         copy_task_list = task_list[:]
@@ -136,10 +141,10 @@ class Algorithm():
                 if self.check_first_in_q(queue, counter) and not current_task:
                     current_task = queue.pop(0)
                     current_task.time_executed.append(counter)
-                    current_task.waiting_time = self.util.task_waiting_time(counter,current_task.arrival_time)
-                    
+                    current_task.waiting_time = self.util.task_waiting_time(counter ,current_task.arrival_time)
+
             if current_task:
-                
+
                 gant_string += current_task.id
                 current_task.cpu_burst_needed -= 1
                 current_task, finished_tasks = self.process_finished_task(current_task, finished_tasks, counter)
@@ -157,31 +162,31 @@ class Algorithm():
         counter = 0
         queue = []
         gant_string: str = ""
-        current_task:Task = None
+        current_task :Task = None
         finished_tasks = []
-        task_list:list[Task] = sorted(task_list, key=lambda x: x.arrival_time)
+        task_list :list[Task] = sorted(task_list, key=lambda x: x.arrival_time)
         copy_task_list = task_list[:]
 
         while len(finished_tasks) != len(task_list):
 
-            #if there are still tasks in task list append it to queue if the first index of the task_list.arrival time == is equal to the counter
+            # if there are still tasks in task list append it to queue if the first index of the task_list.arrival time == is equal to the counter
             if  copy_task_list:
-                queue, copy_task_list = self.add_to_queue(copy_task_list,counter, queue)
+                queue, copy_task_list = self.add_to_queue(copy_task_list ,counter, queue)
 
-            #if queue has tasks
+            # if queue has tasks
             if queue:
-                #check our current task
-                #sort our queue by cpu burst
+                # check our current task
+                # sort our queue by cpu burst
                 queue = sorted(queue, key=lambda x: x.cpu_burst)
 
-                #check first in q and if we dont have a current task if both are true
+                # check first in q and if we dont have a current task if both are true
                 if not current_task:
-                    #current task will be the first in q then change task attributes
+                    # current task will be the first in q then change task attributes
                     current_task = queue.pop(0)
                     current_task.time_executed.append(counter)
-                    current_task.waiting_time = self.util.task_waiting_time(counter,current_task.arrival_time)
+                    current_task.waiting_time = self.util.task_waiting_time(counter ,current_task.arrival_time)
 
-            
+
             if current_task:
                 gant_string += current_task.id
                 current_task.cpu_burst_needed -= 1
@@ -201,7 +206,7 @@ class Algorithm():
         counter = 0
         queue = []
         gant_string = ""
-        current_task:Task = None
+        current_task :Task = None
         finished_tasks = []
         task_list = sorted(task_list, key=lambda x: x.arrival_time)
         copy_task_list = task_list[:]
@@ -224,7 +229,7 @@ class Algorithm():
                         waiting_time_y = current_task.time_executed[-1] - current_task.shift[-1]
                         current_task.waiting_time = current_task.waiting_time + waiting_time_y
                     else:
-                        current_task.waiting_time = self.util.task_waiting_time(counter,current_task.arrival_time)
+                        current_task.waiting_time = self.util.task_waiting_time(counter ,current_task.arrival_time)
 
             if current_task:
                 gant_string += current_task.id
@@ -250,10 +255,10 @@ class Algorithm():
         self.printer.waiting_time_printer(task_list)
         self.revert_cpu_burst(task_list)
 
-    def revert_cpu_burst(self,task_list: list[Task]):
+    def revert_cpu_burst(self ,task_list: list[Task]):
         for task in task_list:
             task.cpu_burst_needed = task.cpu_burst
-            
+
     def add_to_queue(self, task_list, counter, queue):
         added_tasks = []
         while task_list and task_list[0].arrival_time == counter:
@@ -265,28 +270,42 @@ class Algorithm():
         if queue and queue[0].arrival_time <= counter:
             return True
         return False
-    
+
     def process_finished_task(self, current_task: Task, finished_tasks: list[Task], counter):
         if current_task.cpu_burst_needed == 0:
             current_task.shift.append(counter + 1)
-            current_task.turnaround_time = self.util.task_turnaround_time(counter+1,current_task.arrival_time)
+            current_task.turnaround_time = self.util.task_turnaround_time(counter +1 ,current_task.arrival_time)
             finished_tasks.append(current_task)
             current_task = None
 
         return current_task, finished_tasks
-    
 
 
 if __name__ == '__main__':
     tasks = []
-     
-    task1 = Task('A', 2, 11)
-    task2 = Task('B', 3, 8)
-    task3 = Task('C', 10, 12)
-    task4 = Task('D', 7, 3)
-    task5 = Task('E', 10, 11)
-    task6 = Task('F', 10, 3)
-    tasks.extend([task1, task2, task3, task4, task5, task6])
     algo = Algorithm()
+    algoU = algo_util()
 
-    algo.srtf(tasks)
+    num_tasks = int(input("Enter the number of tasks: "))
+    for i in range(num_tasks):
+        id = input(f"Enter task ID for task {i + 1}: ")
+        arrival_time = int(input(f"Enter arrival time for task {id}: "))
+        cpu_burst = int(input(f"Enter CPU burst for task {id}: "))
+        task = Task(id, arrival_time, cpu_burst)
+        tasks.append(task)
+
+    while True:
+        choice = input("Choose algorithm: \n1. FCFS\n2. SPF\n3. SRTF\nEnter choice (1/2/3): ")
+
+        if choice == '1':
+            algo.fcfs(tasks)
+            break
+        elif choice == '2':
+            algo.spf(tasks)
+            break
+        elif choice == '3':
+            algo.srtf(tasks)
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
