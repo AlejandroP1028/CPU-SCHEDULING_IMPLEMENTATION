@@ -4,7 +4,11 @@
 
 # bug 2: if id of task is more than 1 the printer would go wild
 # solution: limit id of task to 1 character
-# status: resolved 
+# status: resolved
+
+# bug 3: if number of tasks is 0 the program continues
+# solution : add an error handler to improve
+# status : not yet resolved 
 
 
 class algo_util:
