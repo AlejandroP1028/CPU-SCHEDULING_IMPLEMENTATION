@@ -12,7 +12,7 @@
 
 #bug 4: if the input for arrival time is not an integer there will be Value Error
 #solution: add try catch for value error in arrival time input
-#status : not yet resolved
+#status : not yet resolved.
 
 class algo_util:
     def get_total_burst(self, task_list):
