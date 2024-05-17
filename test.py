@@ -4,7 +4,16 @@
 
 # bug 2: if id of task is more than 1 the printer would go wild
 # solution: limit id of task to 1 character
-# status: resolved 
+# status: resolved
+
+# bug 3: if number of tasks is 0 the program continues
+# solution : add an error handler to improve
+# status : not yet resolved 
+
+#bug 4: if the input for arrival time is not an integer there will be Value Error
+#solution: add try catch for value error in arrival time input
+#status : not yet resolved.
+
 class algo_util:
     def get_total_burst(self, task_list):
         total_burst = 0
