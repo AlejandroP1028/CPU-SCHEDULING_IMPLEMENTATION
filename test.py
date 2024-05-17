@@ -10,6 +10,7 @@
 # solution : add an error handler to improve
 # status : not yet resolved 
 
+#bug 4
 
 class algo_util:
     def get_total_burst(self, task_list):
