@@ -1,30 +1,30 @@
 class Task {
-    static tasks = [];
-  
-    constructor(id, arrivalTime, cpuBurst) {
-      if (id.length !== 1) {
-        throw new Error("Task ID must be a single character.");
-      }
-      if (Task.checkIdExists(id)) {
-        throw new Error("Task ID must be unique.");
-      }
-      this.id = id;
-      this.arrivalTime = arrivalTime;
-      this.cpuBurst = cpuBurst;
-      this.cpuBurstNeeded = cpuBurst;
-      this.waitingTime = 0;
-      this.turnaroundTime = 0;
-      this.timeExecuted = []; // Time when executed can be 1 or many depending on the process
-      this.shift = []; // Time shifted value can be 1 or more depending on the process
-      Task.tasks.push(this);
+  static tasks = [];
+
+  constructor(id, arrivalTime, cpuBurst) {
+    if (id.length !== 1) {
+      throw new Error("Task ID must be a single character.");
     }
-  
-    static checkIdExists(id) {
-      return Task.tasks.some(task => task.id === id);
+    if (Task.checkIdExists(id)) {
+      throw new Error("Task ID must be unique.");
     }
-  
-    toString() {
-      return `ID: ${this.id}
+    this.id = id;
+    this.arrivalTime = arrivalTime;
+    this.cpuBurst = cpuBurst;
+    this.cpuBurstNeeded = cpuBurst;
+    this.waitingTime = 0;
+    this.turnaroundTime = 0;
+    this.timeExecuted = []; // Time when executed can be 1 or many depending on the process
+    this.shift = []; // Time shifted value can be 1 or more depending on the process
+    Task.tasks.push(this);
+  }
+
+  static checkIdExists(id) {
+    return Task.tasks.some(task => task.id === id);
+  }
+
+  toString() {
+    return `ID: ${this.id}
   Arrival Time: ${this.arrivalTime}
   CPU Burst: ${this.cpuBurst}
   CPU Burst Needed: ${this.cpuBurstNeeded}
@@ -32,126 +32,126 @@ class Task {
   Turnaround Time: ${this.turnaroundTime}
   Time Executed: ${this.timeExecuted}
   Time Shifted: ${this.shift}`;
-    }
   }
-  
+}
+
 class AlgoUtil {
-getTotalBurst(taskList) {
+  getTotalBurst(taskList) {
     let totalBurst = 0;
     for (let task of taskList) {
-    totalBurst += task.cpuBurst;
+      totalBurst += task.cpuBurst;
     }
     return totalBurst;
-}
+  }
 
-taskWaitingTime(timeExecuted, arrivalTime) {
+  taskWaitingTime(timeExecuted, arrivalTime) {
     // waiting time = time executed - arrival time
     return timeExecuted - arrivalTime;
-}
+  }
 
-taskTurnaroundTime(timeOfCompletion, arrivalTime) {
+  taskTurnaroundTime(timeOfCompletion, arrivalTime) {
     // time of completion - arrival time
     return timeOfCompletion - arrivalTime;
-}
+  }
 
-avg(lst) {
+  avg(lst) {
     let num = 0;
     for (let i of lst) {
-    num += i;
+      num += i;
     }
     return num / lst.length;
-}
-}
-  
-class AlgoPrinter {
-    constructor() {
-      this.util = new AlgoUtil();
-    }
-  
-    gantPrinter(gantString) {
-      let finalString = "";
-      let strList = [...gantString];
-      let currentChar = null;
-      let currentCharCount = 0;
-  
-      for (let char of strList) {
-        if (currentChar === char) {
-          currentCharCount += 1;
-        } else {
-          if (currentChar) {
-            finalString += "|";
-            for (let x = 0; x < currentCharCount; x++) {
-              if (x === Math.floor(currentCharCount / 2)) {
-                if (currentChar === "-") {
-                  finalString += "@";
-                } else {
-                  finalString += currentChar;
-                }
-              } else {
-                if (currentChar === "-") {
-                  finalString += "@";
-                } else {
-                  finalString += "-";
-                }
-              }
-            }
-            currentCharCount = 0; // Reset count for the new character
-          }
-          currentChar = char;
-          currentCharCount = 1;
-        }
-      }
-  
-      // Append the remaining characters after the loop ends
-      if (currentChar) {
-        finalString += "|";
-        for (let x = 0; x < currentCharCount; x++) {
-          if (x === Math.floor(currentCharCount / 2)) {
-            finalString += currentChar;
-          } else {
-            if (currentChar === "-") {
-              finalString += " ";
-            } else {
-              finalString += "-";
-            }
-          }
-        }
-      }
-      finalString += "|";
-      console.log(finalString);
-    }
-  
-    turnaroundPrinter(taskList) {
-      let turnaroundList = [];
-      let turnaroundStr = "Turnaround Time:\n";
-      for (let task of taskList) {
-        turnaroundList.push(task.turnaroundTime);
-        turnaroundStr += `TA ${task.id.toLowerCase()} = ${task.turnaroundTime}ms\n`;
-      }
-  
-      turnaroundStr += `Average TA: ${this.util.avg(turnaroundList)}ms`;
-      console.log(turnaroundStr);
-    }
-  
-    waitingTimePrinter(taskList) {
-      let waitingTime = [];
-      let waitingTimeStr = "Waiting Time:\n";
-      for (let task of taskList) {
-        waitingTime.push(task.waitingTime);
-        waitingTimeStr += `WT ${task.id.toLowerCase()} = ${task.waitingTime}ms\n`;
-      }
-  
-      waitingTimeStr += `Average WT: ${this.util.avg(waitingTime)}ms`;
-      console.log(waitingTimeStr);
-    } 
-}
-class Algorithm {
-constructor() {
-    this.printer = new AlgoPrinter();
-    this.util = new AlgoUtil();
+  }
 }
 
-fcfs(taskList) {
+class AlgoPrinter {
+  constructor() {
+    this.util = new AlgoUtil();
+  }
+
+  gantPrinter(gantString) {
+    let finalString = "";
+    let strList = [...gantString];
+    let currentChar = null;
+    let currentCharCount = 0;
+
+    for (let char of strList) {
+      if (currentChar === char) {
+        currentCharCount += 1;
+      } else {
+        if (currentChar) {
+          finalString += "|";
+          for (let x = 0; x < currentCharCount; x++) {
+            if (x === Math.floor(currentCharCount / 2)) {
+              if (currentChar === "-") {
+                finalString += "@";
+              } else {
+                finalString += currentChar;
+              }
+            } else {
+              if (currentChar === "-") {
+                finalString += "@";
+              } else {
+                finalString += "-";
+              }
+            }
+          }
+          currentCharCount = 0; // Reset count for the new character
+        }
+        currentChar = char;
+        currentCharCount = 1;
+      }
+    }
+
+    // Append the remaining characters after the loop ends
+    if (currentChar) {
+      finalString += "|";
+      for (let x = 0; x < currentCharCount; x++) {
+        if (x === Math.floor(currentCharCount / 2)) {
+          finalString += currentChar;
+        } else {
+          if (currentChar === "-") {
+            finalString += " ";
+          } else {
+            finalString += "-";
+          }
+        }
+      }
+    }
+    finalString += "|";
+    console.log(finalString);
+  }
+
+  turnaroundPrinter(taskList) {
+    let turnaroundList = [];
+    let turnaroundStr = "Turnaround Time:\n";
+    for (let task of taskList) {
+      turnaroundList.push(task.turnaroundTime);
+      turnaroundStr += `TA ${task.id.toLowerCase()} = ${task.turnaroundTime}ms\n`;
+    }
+
+    turnaroundStr += `Average TA: ${this.util.avg(turnaroundList)}ms`;
+    console.log(turnaroundStr);
+  }
+
+  waitingTimePrinter(taskList) {
+    let waitingTime = [];
+    let waitingTimeStr = "Waiting Time:\n";
+    for (let task of taskList) {
+      waitingTime.push(task.waitingTime);
+      waitingTimeStr += `WT ${task.id.toLowerCase()} = ${task.waitingTime}ms\n`;
+    }
+
+    waitingTimeStr += `Average WT: ${this.util.avg(waitingTime)}ms`;
+    console.log(waitingTimeStr);
+  }
+}
+class Algorithm {
+  constructor() {
+    this.printer = new AlgoPrinter();
+    this.util = new AlgoUtil();
+  }
+
+  fcfs(taskList) {
     let counter = 0;
     let queue = [];
     let gantString = "";
@@ -161,36 +161,36 @@ fcfs(taskList) {
     let copyTaskList = [...taskList];
 
     while (finishedTasks.length !== taskList.length) {
-    if (copyTaskList.length > 0) {
+      if (copyTaskList.length > 0) {
         [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
-    }
-    if (queue.length > 0) {
+      }
+      if (queue.length > 0) {
         if (this.checkFirstInQueue(queue, counter) && !currentTask) {
-        currentTask = queue.shift();
-        currentTask.timeExecuted.push(counter);
-        currentTask.waitingTime = this.util.taskWaitingTime(counter, currentTask.arrivalTime);
+          currentTask = queue.shift();
+          currentTask.timeExecuted.push(counter);
+          currentTask.waitingTime = this.util.taskWaitingTime(counter, currentTask.arrivalTime);
         }
-    }
+      }
 
-    if (currentTask) {
+      if (currentTask) {
         gantString += currentTask.id;
         currentTask.cpuBurstNeeded -= 1;
         [currentTask, finishedTasks] = this.processFinishedTask(currentTask, finishedTasks, counter);
-    } else {
+      } else {
         gantString += "-";
-    }
-    
-    counter += 1; // Increment counter regardless of tasks
+      }
+
+      counter += 1; // Increment counter regardless of tasks
     }
 
-    
+
     this.printer.gantPrinter(gantString);
     this.printer.turnaroundPrinter(taskList);
     this.printer.waitingTimePrinter(taskList);
     this.revertCpuBurst(taskList);
-}
+  }
 
-spf(taskList) {
+  spf(taskList) {
     let counter = 0;
     let queue = [];
     let gantString = "";
@@ -199,38 +199,38 @@ spf(taskList) {
     let copyTaskList = [...taskList].sort((a, b) => a.arrivalTime - b.arrivalTime);
 
     while (finishedTasks.length !== taskList.length) {
-        if (copyTaskList.length > 0) {
-            [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
+      if (copyTaskList.length > 0) {
+        [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
+      }
+
+      if (queue.length > 0) {
+        queue.sort((a, b) => a.cpuBurst - b.cpuBurst);
+
+        if (!currentTask) {
+          currentTask = queue.shift();
+          currentTask.timeExecuted.push(counter);
+          currentTask.waitingTime = this.util.taskWaitingTime(counter, currentTask.arrivalTime);
         }
+      }
 
-        if (queue.length > 0) {
-            queue.sort((a, b) => a.cpuBurst - b.cpuBurst);
+      if (currentTask) {
+        gantString += currentTask.id;
+        currentTask.cpuBurstNeeded -= 1;
+        [currentTask, finishedTasks] = this.processFinishedTask(currentTask, finishedTasks, counter);
+      } else {
+        gantString += "-";
+      }
 
-            if (!currentTask) {
-                currentTask = queue.shift();
-                currentTask.timeExecuted.push(counter);
-                currentTask.waitingTime = this.util.taskWaitingTime(counter, currentTask.arrivalTime);
-            }
-        }
-
-        if (currentTask) {
-            gantString += currentTask.id;
-            currentTask.cpuBurstNeeded -= 1;
-            [currentTask, finishedTasks] = this.processFinishedTask(currentTask, finishedTasks, counter);
-        } else {
-            gantString += "-";
-        }
-
-        counter += 1; // Increment counter regardless of tasks
+      counter += 1; // Increment counter regardless of tasks
     }
 
     this.printer.gantPrinter(gantString);
     this.printer.turnaroundPrinter(taskList);
     this.printer.waitingTimePrinter(taskList);
     this.revertCpuBurst(taskList);
-}
+  }
 
-srtf(taskList) {
+  srtf(taskList) {
     let counter = 0;
     let queue = [];
     let gantString = "";
@@ -239,98 +239,91 @@ srtf(taskList) {
     let copyTaskList = [...taskList].sort((a, b) => a.arrivalTime - b.arrivalTime);
 
     while (finishedTasks.length !== taskList.length && counter < 50) {
-        if (copyTaskList.length > 0) {
-            [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
+      if (copyTaskList.length > 0) {
+        [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
+      }
+
+      if (queue.length > 0) {
+        queue.sort((a, b) => a.cpuBurstNeeded - b.cpuBurstNeeded);
+        let shortestTask = queue[0];
+
+        if (!currentTask || shortestTask.cpuBurstNeeded < currentTask.cpuBurstNeeded) {
+          if (currentTask) {
+            currentTask.shift.push(counter);
+            queue.push(currentTask);
+          }
+          currentTask = queue.shift();
+          currentTask.timeExecuted.push(counter);
+          if (currentTask.timeExecuted.length > 1) {
+            let waitingTimeY = currentTask.timeExecuted[currentTask.timeExecuted.length - 1] - currentTask.shift[currentTask.shift.length - 1];
+            currentTask.waitingTime += waitingTimeY;
+          } else {
+            currentTask.waitingTime = this.util.taskWaitingTime(counter, currentTask.arrivalTime);
+          }
         }
+      }
 
-        if (queue.length > 0) {
-            queue.sort((a, b) => a.cpuBurstNeeded - b.cpuBurstNeeded);
-            let shortestTask = queue[0];
+      if (currentTask) {
+        gantString += currentTask.id;
+        currentTask.cpuBurstNeeded -= 1;
 
-            if (!currentTask || shortestTask.cpuBurstNeeded < currentTask.cpuBurstNeeded) {
-                if (currentTask) {
-                    currentTask.shift.push(counter);
-                    queue.push(currentTask);
-                }
-                currentTask = queue.shift();
-                currentTask.timeExecuted.push(counter);
-                if (currentTask.timeExecuted.length > 1) {
-                    let waitingTimeY = currentTask.timeExecuted[currentTask.timeExecuted.length - 1] - currentTask.shift[currentTask.shift.length - 1];
-                    currentTask.waitingTime += waitingTimeY;
-                } else {
-                    currentTask.waitingTime = this.util.taskWaitingTime(counter, currentTask.arrivalTime);
-                }
-            }
+        if (currentTask.cpuBurstNeeded <= 0) {
+          currentTask.shift.push(counter + 1);
+          currentTask.turnaroundTime = this.util.taskTurnaroundTime(counter + 1, currentTask.arrivalTime);
+          finishedTasks.push(currentTask);
+          currentTask = null;
         }
+      } else {
+        gantString += "-";
+      }
 
-        if (currentTask) {
-            gantString += currentTask.id;
-            currentTask.cpuBurstNeeded -= 1;
-
-            if (currentTask.cpuBurstNeeded <= 0) {
-                currentTask.shift.push(counter + 1);
-                currentTask.turnaroundTime = this.util.taskTurnaroundTime(counter + 1, currentTask.arrivalTime);
-                finishedTasks.push(currentTask);
-                currentTask = null;
-            }
-        } else {
-            gantString += "-";
-        }
-
-        counter += 1;
+      counter += 1;
     }
 
     this.printer.gantPrinter(gantString);
     this.printer.turnaroundPrinter(taskList);
     this.printer.waitingTimePrinter(taskList);
     this.revertCpuBurst(taskList);
-}
+  }
 
-revertCpuBurst(taskList) {
+  revertCpuBurst(taskList) {
     for (let task of taskList) {
-        task.cpuBurstNeeded = task.cpuBurst;
+      task.cpuBurstNeeded = task.cpuBurst;
     }
-}
+  }
 
-addToQueue(taskList, counter, queue) {
+  addToQueue(taskList, counter, queue) {
     let addedTasks = [];
     while (taskList.length > 0 && taskList[0].arrivalTime == counter) {
-        addedTasks.push(taskList.shift());
+      addedTasks.push(taskList.shift());
     }
     if (addedTasks.length > 0) {
-        queue.push(...addedTasks);
+      queue.push(...addedTasks);
     }
     return [queue, taskList];
-}
+  }
 
-checkFirstInQueue(queue, counter) {
+  checkFirstInQueue(queue, counter) {
     if (queue.length > 0 && queue[0].arrivalTime <= counter) {
-        return true;
+      return true;
     }
     return false;
-}
+  }
 
-processFinishedTask(currentTask, finishedTasks, counter) {
+  processFinishedTask(currentTask, finishedTasks, counter) {
     if (currentTask.cpuBurstNeeded === 0) {
-        currentTask.shift.push(counter + 1);
-        currentTask.turnaroundTime = this.util.taskTurnaroundTime(counter + 1, currentTask.arrivalTime);
-        finishedTasks.push(currentTask);
-        currentTask = null;
+      currentTask.shift.push(counter + 1);
+      currentTask.turnaroundTime = this.util.taskTurnaroundTime(counter + 1, currentTask.arrivalTime);
+      finishedTasks.push(currentTask);
+      currentTask = null;
     }
     return [currentTask, finishedTasks];
-}
+  }
 
 }
-
-let tasks = [];
-let algo = new Algorithm();
-let algoU = new AlgoUtil();
-
-let task1 = new Task('A',5,3)
-let task2 = new Task('B',0,10)
-let task3 = new Task('C',1,3)
-let task4 = new Task('D',6,4)
-let task5 = new Task('E',3,7)
-
-tasks.push(task1,task2,task3,task4,task5)
-algo.srtf(tasks)
+module.exports = {
+  Task,
+  AlgoUtil,
+  AlgoPrinter,
+  Algorithm
+};
