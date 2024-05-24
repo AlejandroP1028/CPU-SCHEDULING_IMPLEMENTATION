@@ -5,7 +5,7 @@ class Task {
     if (id.length !== 1) {
       throw new Error("Task ID must be a single character.");
     }
-    if (Task.checkIdExists(id)) {
+    if (Task.checkId(id)) {
       throw new Error("Task ID must be unique.");
     }
     this.id = id;
@@ -19,7 +19,7 @@ class Task {
     Task.tasks.push(this);
   }
 
-  static checkIdExists(id) {
+  static checkId(id) {
     return Task.tasks.some(task => task.id === id);
   }
 
