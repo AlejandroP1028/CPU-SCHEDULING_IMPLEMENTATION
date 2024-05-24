@@ -26,6 +26,12 @@ Testing and Bug fixing </br>
 
 Utilize javascript functions to translate python code done </br>
 
-## Current Phase: 3
+## Phase: 3
 
 [Figma File](https://www.figma.com/design/m3m7rkpa2c2jrjQBXZnuJi/CPU-Sched-Figma?node-id=0-1&t=IozfYb45vGGhfKS5-0)
+
+## Current Phase: 4
+
+- TaskComponent Done
+- Base Functionalities Done
+- work on error catchers with alert component, work on gantt chart soon and aT and wT tables soon
