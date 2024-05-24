@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row space-x-4 m-4 p-4 bg-white rounded-lg border-4 border-gray-900 overflow-x-auto min-w-max">
+  <div class="flex flex-row space-x-4 m-4 p-4 bg-white rounded-lg border-4 border-gray-900 overflow-x-auto">
     <addTask :click="addTask" class="ml-4 order-last"/>
     <taskComponent 
       v-for="(task) in tasks"  

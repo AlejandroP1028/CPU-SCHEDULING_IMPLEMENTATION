@@ -39,6 +39,37 @@
       </div>
       
     </div>
+    <div v-else>
+      <div class="mt-6">
+          <div class="block mb-2 text-sm font-medium text-gray-900">Task ID:</div>
+        <div
+          name="taskId" 
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" >
+          {{this.id}} 
+        </div>
+
+      </div>
+      <div>
+        <div class="block mb-2 text-sm font-medium text-gray-900">Arrival Time:</div>
+        <div
+          name="arrivalTime" 
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" >
+          {{this.arrivalTime}} 
+        </div>
+      </div>
+      <div>
+        <div class="block mb-2 text-sm font-medium text-gray-900">Burst Time: </div>
+        <div
+          name="cpuBurst" 
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" >
+          {{this.cpuBurst}} 
+        </div>
+      </div>
+      <div class="mt-4 flex justify-center">
+        <button type="button" @click="edit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none ">Edit</button>
+      </div>
+      
+    </div>
   </div>
 </template>
 
@@ -56,7 +87,9 @@ export default {
   methods: {
     checkFinished() {
       this.finished = this.id && this.arrivalTime && this.cpuBurst ;
-      console.log(this.finished)
+    },
+    edit() {
+      this.finished = !this.finished;
     },
     deleteDiv(){
       this.deleted = !this.deleted
@@ -67,9 +100,6 @@ export default {
     arrivalTime: 'checkFinished',
     cpuBurst: 'checkFinished'
   },
-  created() {
-    this.checkFinished();
-  }
 };
 </script>
 
