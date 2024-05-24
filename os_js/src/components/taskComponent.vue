@@ -1,14 +1,14 @@
 <template>
-  <div v-if="!deleted" class="min-w-64 p-4 bg-gray-200 rounded-lg shadow-lg">
+  <div v-if="!deleted" class="min-w-64 p-4 rounded-lg shadow-lg " :class="finished ? 'bg-blue-200' : 'bg-gray-300' ">
     <div v-if="!finished">
       <div>
         <div class="flex justify-end">
           <button type="button" @click="deleteDiv">
-            <svg class="rounded-full hover:bg-gray-200" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentFill"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            <svg class="rounded-full hover:bg-red-500 w-6 h-6  transition-colors duration-300 ease" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" width="24px" fill="currentFill"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
           </button>
         </div>
 
-          <label for="task_id" class="block mb-2 text-sm font-medium text-gray-900">Task ID:</label>
+        <label for="task_id" class="block mb-2 text-sm font-medium text-gray-900">Task ID:</label>
         <input 
           type="text" 
           name="task_id" 
@@ -35,40 +35,32 @@
         />
       </div>
       <div class="mt-4 flex justify-center">
-        <button type="button" @click="checkFinished" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none ">Submit</button>
+        <button type="button" @click="checkFinished" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">Submit</button>
       </div>
       
     </div>
     <div v-else>
       <div class="mt-6">
-          <div class="block mb-2 text-sm font-medium text-gray-900">Task ID:</div>
-        <div
-          name="taskId" 
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" >
-          {{this.id}} 
+        <div class="block mb-2 text-sm font-medium text-gray-900">Task ID:</div>
+        <div name="taskId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+          {{ id }} 
         </div>
-
       </div>
       <div>
         <div class="block mb-2 text-sm font-medium text-gray-900">Arrival Time:</div>
-        <div
-          name="arrivalTime" 
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" >
-          {{this.arrivalTime}} 
+        <div name="arrivalTime" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+          {{ arrivalTime }} 
         </div>
       </div>
       <div>
         <div class="block mb-2 text-sm font-medium text-gray-900">Burst Time: </div>
-        <div
-          name="cpuBurst" 
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" >
-          {{this.cpuBurst}} 
+        <div name="cpuBurst" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+          {{ cpuBurst }} 
         </div>
       </div>
       <div class="mt-4 flex justify-center">
-        <button type="button" @click="edit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none ">Edit</button>
+        <button type="button" @click="edit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">Edit</button>
       </div>
-      
     </div>
   </div>
 </template>
@@ -80,25 +72,28 @@ export default {
   },
   data() {
     return {
+      id: '',
+      arrivalTime: 0,
+      cpuBurst: 0,
       finished: false,
       deleted: false
     };
   },
   methods: {
     checkFinished() {
-      this.finished = this.id && this.arrivalTime && this.cpuBurst ;
+      this.finished = this.id && this.arrivalTime >= 0 && this.cpuBurst >= 1;
+      if (this.finished) {
+        this.$emit('task-finished', { id: this.id, arrivalTime: this.arrivalTime, cpuBurst: this.cpuBurst });
+      }
     },
     edit() {
       this.finished = !this.finished;
+      this.$emit('task-edit', { id: this.id, arrivalTime: this.arrivalTime, cpuBurst: this.cpuBurst });
     },
     deleteDiv(){
-      this.deleted = !this.deleted
+      this.$emit('task-deleted')
+      this.deleted = !this.deleted;
     }
-  },
-  watch: {
-    id: 'checkFinished',
-    arrivalTime: 'checkFinished',
-    cpuBurst: 'checkFinished'
   },
 };
 </script>
