@@ -1,11 +1,12 @@
+let task = []
+
 class Task {
-  static tasks = [];
 
   constructor(id, arrivalTime, cpuBurst) {
     if (id.length !== 1) {
       throw new Error("Task ID must be a single character.");
     }
-    if (Task.checkId(id)) {
+    if (this.checkId(id)) {
       throw new Error("Task ID must be unique.");
     }
     this.id = id;
@@ -16,13 +17,12 @@ class Task {
     this.turnaroundTime = 0;
     this.timeExecuted = []; // Time when executed can be 1 or many depending on the process
     this.shift = []; // Time shifted value can be 1 or more depending on the process
-    Task.tasks.push(this);
+    task.push(this);
   }
 
-  static checkId(id) {
-    return Task.tasks.some(task => task.id === id);
+  checkId(id) {
+    return task.some(task => task.id === id);
   }
-
   toString() {
     return `ID: ${this.id}
   Arrival Time: ${this.arrivalTime}
@@ -61,6 +61,13 @@ class AlgoUtil {
     }
     return num / lst.length;
   }
+
+  removeTasks(){
+    console.log(`before: ${task}`)
+    task = []
+    console.log(`after: ${task}`)
+  }
+
 }
 
 class AlgoPrinter {
@@ -118,7 +125,7 @@ class AlgoPrinter {
       }
     }
     finalString += "|";
-    console.log(finalString);
+    return finalString;
   }
 
   turnaroundPrinter(taskList) {
@@ -130,7 +137,7 @@ class AlgoPrinter {
     }
 
     turnaroundStr += `Average TA: ${this.util.avg(turnaroundList)}ms`;
-    console.log(turnaroundStr);
+    return turnaroundStr;
   }
 
   waitingTimePrinter(taskList) {
@@ -142,7 +149,7 @@ class AlgoPrinter {
     }
 
     waitingTimeStr += `Average WT: ${this.util.avg(waitingTime)}ms`;
-    console.log(waitingTimeStr);
+    return waitingTimeStr;
   }
 }
 class Algorithm {
@@ -231,6 +238,7 @@ class Algorithm {
   }
 
   srtf(taskList) {
+    console.log(taskList)
     let counter = 0;
     let queue = [];
     let gantString = "";
@@ -279,11 +287,17 @@ class Algorithm {
 
       counter += 1;
     }
-
-    this.printer.gantPrinter(gantString);
-    this.printer.turnaroundPrinter(taskList);
-    this.printer.waitingTimePrinter(taskList);
+    let gs = this.printer.gantPrinter(gantString);
+    let ta = this.printer.turnaroundPrinter(taskList);
+    let wt = this.printer.waitingTimePrinter(taskList);
+    counter = 0
     this.revertCpuBurst(taskList);
+
+    return {
+      gantString: gs,
+      ta: ta,
+      wt: wt
+    }
   }
 
   revertCpuBurst(taskList) {

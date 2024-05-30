@@ -1,32 +1,48 @@
 <template>
-  <div class="flex flex-row space-x-4 m-4 p-4 bg-white rounded-lg border-4 border-gray-900 overflow-x-auto">
+  <div class="flex flex-row space-x-4 my-8 mx-32 p-4 bg-white rounded-lg border-4 border-gray-900 overflow-x-auto">
     <addTask :click="addTask" class="ml-4 order-last"/>
     <transition-group name="task" tag="div" class="flex flex-row space-x-4">
       <taskComponent 
-        v-for="(task) in tasks"  
+        v-for="(task,i) in tasks"  
         :key="task" 
+        :taskid="i"
         @task-finished="handleTaskFinished"
         @task-edit="handleEdit"
         @task-deleted="onTaskDeleted">
       </taskComponent>
     </transition-group>
   </div>
-  <div class="m-4 p-4 bg-blue-200 h-24 flex flex-row justify-between">
-    <div class="w-2/3">
-      
-    </div>
+  <div class="my-8 mx-32 p-4 h-24 flex flex-row justify-end">
     <div>
       <button type="button" @click="checkFinished" class="text-white bg-gray-800 hover:bg-gray-600 font-medium rounded-xl text-xl px-10 py-5 transition-colors duration-300 ease">EXECUTE</button>
     </div>
+  </div>
+  <div v-if="gantInfo.length > 0" class="flex flex-col h-64 space-y-4 rounded-lg my-8 mx-32 shadow-lg border-4 border-gray-900 p-4 ">
+
+    <div class="flex h-1/2 justify-center items-center bg-gray-700">
+      <div class="h-3/4 bg-blue-200 p-4 rounded-lg border-2 border-gray-900">
+      </div>
+    </div>
+
+
+    <div class="flex h-1/2 bg-blue-700">
+    </div>
+    <div>
+
+    </div>
+
   </div>
 </template>
 
 <script>
 import taskComponent from './components/taskComponent.vue';
 import addTask from './components/addTask.vue';
-import { Task, Algorithm } from './cpu.js';
+import { Task, Algorithm, AlgoUtil } from './cpu.js';
 
 const algo = new Algorithm()
+const algoU = new AlgoUtil()
+
+
 export default {
   name: 'App',
   components: {
@@ -38,27 +54,23 @@ export default {
       tasks: [],
       finishedTasks: [],
       finalTask: [],
+      gantInfo: [],
+      totalLen: 0,
+      info: null,
       counter: 0,
     };
   },
-  created() {
-    this.initializeTasks();
-  },
   methods: {
-    initializeTasks() {
-      // Initialization logic, if any
-    },
     addTask() {
       this.tasks.push(++this.counter);
-      console.log(this.tasks)
+
     },
-    onTaskDeleted(){
-      this.tasks.pop()
-      console.log(this.tasks)
+    onTaskDeleted(index){
+      this.tasks.splice(index,1)
+
     },
     handleTaskFinished(task) {
       this.finishedTasks.push(task);
-      console.log(this.finishedTasks)
     },
     handleEdit(updatedTask){
       let index = this.finishedTasks.findIndex(task => task.id == updatedTask.id)
@@ -66,12 +78,26 @@ export default {
 
     },
     checkFinished() {
+      let num = 0
       this.finishedTasks.forEach(task => {
         this.createTask(task.id, task.arrivalTime, task.cpuBurst);
       });
-      algo.srtf(this.finalTask)
+      this.info = algo.srtf(this.finalTask)
+      algoU.removeTasks()
+      this.finalTask = []
+
+      this.gantInfo = this.info['gantString'].split('|').filter((s) => s != '').map((s) => [s.length,this.findChar(s)])
+      this.gantInfo.forEach((i) => num += i[0])
+      this.totalLen = num
+
     },
-    createTask(id, arrivalTime, cpuBurst) {
+    findChar(string){
+      if (string[0] == '@'){
+        return ' '
+      }
+      return string[Math.floor(string.length / 2)]
+    },
+     createTask(id, arrivalTime, cpuBurst) {
       let task = new Task(id, arrivalTime, cpuBurst);
       this.finalTask.push(task);
     }

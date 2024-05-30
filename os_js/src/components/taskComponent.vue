@@ -69,6 +69,7 @@
 export default {
   name: 'taskComponent',
   props: {
+    taskid: String
   },
   data() {
     return {
@@ -91,7 +92,7 @@ export default {
       this.$emit('task-edit', { id: this.id, arrivalTime: this.arrivalTime, cpuBurst: this.cpuBurst });
     },
     deleteDiv(){
-      this.$emit('task-deleted')
+      this.$emit('task-deleted',this.taskid)
       this.deleted = !this.deleted;
     }
   },
