@@ -19,8 +19,11 @@
     </div>
   </div>
   <div v-if="gantInfo.length > 0" class="flex flex-col h-96 space-y-4 rounded-lg my-8 mx-32 shadow-lg border-4 border-gray-900 p-4">
-    <div class="flex h-1/2 justify-center items-center bg-gray-700">
-      <div class="h-3/4 w-3/4 bg-blue-200 rounded-full border-2 border-gray-900 flex flex-row divide-x-4 overflow-hidden">
+    
+    <div class="flex h-1/2 flex-col justify-center items-center">
+      <h1 class="text-3xl font-bold mb-4">Gantt Chart</h1>
+
+      <div class="h-3/4 w-3/4 flex flex-row divide-x-4 border rounded-lg border-gray-900">
         <chartChild 
           v-for="(i, index) in gantInfo" 
           :key="index"
@@ -28,10 +31,12 @@
           :length="i[0]"
           :color="index % 2 === 0 ? 'bg-gray-200' : 'bg-gray-300'"
           :total = "totalLen"
+          :first = "index === 0 ? true : false"
+          :last = "index === (gantInfo.length - 1) ? true : false"
         />
       </div>
     </div>
-    <div class="flex h-1/2 bg-blue-700"></div>
+    <div class="flex h-1/2 "></div>
   </div>
   </div>
   
