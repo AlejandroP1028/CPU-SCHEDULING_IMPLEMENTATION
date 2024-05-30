@@ -18,12 +18,13 @@
       <button type="button" @click="checkFinished" class="text-white bg-gray-800 hover:bg-gray-600 font-medium rounded-xl text-xl px-10 py-5 transition-colors duration-300 ease">EXECUTE</button>
     </div>
   </div>
-  <div v-if="gantInfo.length > 0" class="flex flex-col h-96 space-y-4 rounded-lg my-8 mx-32 shadow-lg border-4 border-gray-900 p-4">
+  <div v-if="gantInfo.length > 0" class="flex flex-col h-[500px] space-y-4 rounded-lg my-8 mx-32 shadow-lg border-4 border-gray-900 p-4">
     
     <div class="flex h-1/2 flex-col justify-center items-center">
-      <h1 class="text-3xl font-bold mb-4">Gantt Chart</h1>
+      <h1 class="text-3xl font-bold mb-4">{{algo}}</h1>
+      <h1 class="text-3xl font-bold mb-8">Gantt Chart</h1>
 
-      <div class="h-3/4 w-3/4 flex flex-row divide-x-4 border rounded-lg border-gray-900">
+      <div class="h-1/2 w-3/4 flex flex-row divide-x-4 border rounded-lg border-gray-900">
         <chartChild 
           v-for="(i, index) in gantInfo" 
           :key="index"
@@ -67,6 +68,7 @@ export default {
       totalLen: 0,
       info: null,
       counter: 0,
+      algo: 'SRTF',
     };
   },
   methods: {
