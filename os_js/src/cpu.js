@@ -246,7 +246,7 @@ class Algorithm {
     let finishedTasks = [];
     let copyTaskList = [...taskList].sort((a, b) => a.arrivalTime - b.arrivalTime);
 
-    while (finishedTasks.length !== taskList.length && counter < 50) {
+    while (finishedTasks.length !== taskList.length) {
       if (copyTaskList.length > 0) {
         [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
       }

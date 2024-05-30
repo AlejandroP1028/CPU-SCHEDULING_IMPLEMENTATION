@@ -1,25 +1,43 @@
 <template>
-    <div>
-        
+    <div class="h-full flex items-center justify-center" :style="growStyle" :class="color">
+      <h1 class="text-xl font-bold">{{ capitalizedLabel }}</h1>
     </div>
-</template>
-
-<script>
-export default{
-    name: 'child-component',
+  </template>
+  
+  
+  <script>
+  export default {
+    name: 'chartChild',
     props: {
-        str: String,
+      length: Number,
+      label: String,
+      color: String,
+      total: Number
     },
-    data(){
+    data() {
+      return {
+        percentage: 0
+      };
+    },
+    created() {
+      this.percentage = ((this.length / this.total) * 100).toFixed(2);
+      console.log(this.percentage);
+    },
+    computed: {
+      growStyle() {
         return {
-            length: 0,
-            label: '',
-        }
-    },
-    methods: {
-        findLabel(){
-            
-        }
-    },
-}
-</script>
+          flexGrow: (this.length / this.total).toFixed(2)
+        };
+      },
+      capitalizedLabel() {
+        return this.label.toUpperCase();
+      }
+    }
+  };
+  </script>
+  
+
+  
+  <style scoped>
+  </style>
+  

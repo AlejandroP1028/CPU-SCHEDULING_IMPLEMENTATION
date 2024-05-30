@@ -5,6 +5,11 @@
      theme: {
        extend: {},
      },
+     safelist: [
+      {
+        pattern: /grow-\[\d+(\.\d+)?\]/
+      }
+    ],
      variants: {
        extend: {},
      },
