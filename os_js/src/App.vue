@@ -18,7 +18,7 @@
         <button type="button" @click="checkFinished" class="text-white bg-gray-800 hover:bg-gray-600 font-medium rounded-xl text-xl px-10 py-5 transition-colors duration-300 ease">EXECUTE</button>
       </div>
     </div>
-    <div v-if="gantInfo.length > 0" class="flex flex-col h-[500px] space-y-4 my-8 mx-64 rounded-md  shadow-lg border-4 border-gray-900 p-4">
+    <div v-if="gantInfo.length > 0" class="flex flex-col h-[500px] space-y-4 my-8 mx-64 rounded-md shadow-lg border-4 border-gray-900 p-4">
       <div class="flex h-1/2 flex-col justify-center items-center">
         <h1 class="text-3xl font-bold mb-4">{{ algo }}</h1>
         <h1 class="text-3xl font-bold mb-8">Gantt Chart</h1>
@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <!-- Check mo if tama ba to or kulang (table for average waiting time and turnaround time) -->
+    <!-- Check mo if oki na (design for average waiting time and turnaround time) -->
     <div v-if="averageWaitingTime !== null && averageTurnaroundTime !== null" class="my-8 mx-64 p-4 rounded-md shadow-lg border-4 border-gray-900">
       <h1 class="text-3xl font-bold mb-4">Average Times</h1>
       <table class="w-full">
@@ -88,7 +88,7 @@ export default {
       totalLen: 0,
       info: null,
       counter: 0,
-      algo: 'SRTF',
+      algo: 'FCFS',
       averageWaitingTime: null,
       averageTurnaroundTime: null,
     };
@@ -117,16 +117,19 @@ export default {
       this.finalTask = [];
       this.gantInfo = this.info['gantString'].split('|').filter(s => s != '').map(s => [s.length, this.findChar(s)]);
 
+      //Here den
+
       let wtIndex = this.info['wt'].indexOf('Average WT: ');
       let taIndex = this.info['ta'].indexOf('Average TA: ');
-      let wt = parseInt(this.info['wt'].substring(wtIndex + 'Average WT: '.length, this.info['wt'].indexOf('ms', wtIndex)));
-      let ta = parseInt(this.info['ta'].substring(taIndex + 'Average TA: '.length, this.info['ta'].indexOf('ms', taIndex)));
+      let wt = parseFloat(this.info['wt'].substring(wtIndex + 'Average WT: '.length, this.info['wt'].indexOf('ms', wtIndex)));
+      let ta = parseFloat(this.info['ta'].substring(taIndex + 'Average TA: '.length, this.info['ta'].indexOf('ms', taIndex)));
       this.averageWaitingTime = wt.toFixed(2);
       this.averageTurnaroundTime = ta.toFixed(2);
 
       this.gantInfo.forEach(i => num += i[0]);
       this.totalLen = num;
     },
+
     findChar(string) {
       return string[0] == '@' ? ' ' : string[Math.floor(string.length / 2)];
     },
@@ -148,7 +151,7 @@ export default {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(55, 66,  99);
+  background: rgb(55, 66, 99);
 }
 
 /* Add animations */
