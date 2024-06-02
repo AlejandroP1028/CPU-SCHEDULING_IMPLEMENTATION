@@ -12,6 +12,7 @@
   
   
   <script>
+  // use shifted instead of length, placeholder lang talaga yung length jan
   export default {
     name: 'chartChild',
     props: {
@@ -30,7 +31,6 @@
     },
     created() {
       this.percentage = ((this.length / this.total) * 100).toFixed(2);
-      console.log(`first:${this.first},last:${this.last}`);
     },
     computed: {
       growStyle() {
@@ -42,7 +42,7 @@
         return this.label.toUpperCase();
       },
       borderClass(){
-        return this.first ? 'rounded-l-lg' : this.last ? 'rounded-r-lg' : ''
+        return this.first ? 'rounded-l-full' : this.last ? 'rounded-r-full' : ''
       }
     }
   };

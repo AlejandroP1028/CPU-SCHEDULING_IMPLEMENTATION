@@ -63,9 +63,7 @@ class AlgoUtil {
   }
 
   removeTasks(){
-    console.log(`before: ${task}`)
     task = []
-    console.log(`after: ${task}`)
   }
 
 }
@@ -238,7 +236,7 @@ class Algorithm {
   }
 
   srtf(taskList) {
-    console.log(taskList)
+
     let counter = 0;
     let queue = [];
     let gantString = "";
@@ -287,16 +285,20 @@ class Algorithm {
 
       counter += 1;
     }
+
     let gs = this.printer.gantPrinter(gantString);
     let ta = this.printer.turnaroundPrinter(taskList);
     let wt = this.printer.waitingTimePrinter(taskList);
+    let tl = finishedTasks
+
     counter = 0
     this.revertCpuBurst(taskList);
 
     return {
       gantString: gs,
       ta: ta,
-      wt: wt
+      wt: wt,
+      taskList: tl
     }
   }
 
