@@ -90,7 +90,7 @@ export default {
       this.finishedTasks.forEach(task => {
         this.createTask(task.id, task.arrivalTime, task.cpuBurst);
       });
-      this.info = algo.srtf(this.finalTask);
+      this.info = algo.rr(this.finalTask,3);
       //remote tasks inside for next iteration
       algoU.removeTasks();
       this.finalTask = [];

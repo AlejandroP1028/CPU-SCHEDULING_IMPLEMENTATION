@@ -1,7 +1,6 @@
-let task = []
+let task = [];
 
 class Task {
-
   constructor(id, arrivalTime, cpuBurst) {
     if (id.length !== 1) {
       throw new Error("Task ID must be a single character.");
@@ -21,8 +20,9 @@ class Task {
   }
 
   checkId(id) {
-    return task.some(task => task.id === id);
+    return task.some((task) => task.id === id);
   }
+
   toString() {
     return `ID: ${this.id}
   Arrival Time: ${this.arrivalTime}
@@ -62,10 +62,9 @@ class AlgoUtil {
     return num / lst.length;
   }
 
-  removeTasks(){
-    task = []
+  removeTasks() {
+    task = [];
   }
-
 }
 
 class AlgoPrinter {
@@ -139,6 +138,7 @@ class AlgoPrinter {
   }
 
   waitingTimePrinter(taskList) {
+    console.log(taskList)
     let waitingTime = [];
     let waitingTimeStr = "Waiting Time:\n";
     for (let task of taskList) {
@@ -150,6 +150,7 @@ class AlgoPrinter {
     return waitingTimeStr;
   }
 }
+
 class Algorithm {
   constructor() {
     this.printer = new AlgoPrinter();
@@ -187,7 +188,6 @@ class Algorithm {
 
       counter += 1; // Increment counter regardless of tasks
     }
-
 
     this.printer.gantPrinter(gantString);
     this.printer.turnaroundPrinter(taskList);
@@ -236,7 +236,6 @@ class Algorithm {
   }
 
   srtf(taskList) {
-
     let counter = 0;
     let queue = [];
     let gantString = "";
@@ -289,18 +288,89 @@ class Algorithm {
     let gs = this.printer.gantPrinter(gantString);
     let ta = this.printer.turnaroundPrinter(taskList);
     let wt = this.printer.waitingTimePrinter(taskList);
-    let tl = finishedTasks
+    let tl = finishedTasks;
 
-    counter = 0
+    counter = 0;
     this.revertCpuBurst(taskList);
 
     return {
       gantString: gs,
       ta: ta,
       wt: wt,
-      taskList: tl
-    }
+      taskList: tl,
+    };
   }
+
+  rr(taskList, timeSlice) {
+    let counter = 0;
+    let currentSlice = 0;
+    let queue = [];
+    let gantString = "";
+    let currentTask = null;
+    let finishedTasks = [];
+    taskList.sort((a, b) => a.arrivalTime - b.arrivalTime);
+    let copyTaskList = [...taskList];
+
+    while (finishedTasks.length !== taskList.length) {
+      if (copyTaskList.length > 0) {
+        [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
+      }
+
+      if (!currentTask && queue.length > 0) {
+        
+        currentTask = queue.shift();
+        console.log(`task: ${currentTask.id}, queue: ${queue},counter: ${counter}`)
+        currentTask.timeExecuted.push(counter);
+        if (currentTask.timeExecuted.length === 1) {
+          currentTask.waitingTime = this.util.taskWaitingTime(counter, currentTask.arrivalTime);
+        } else {
+          let waitingTimeY = currentTask.timeExecuted[currentTask.timeExecuted.length - 1] - currentTask.shift[currentTask.shift.length - 1];
+          currentTask.waitingTime += waitingTimeY;
+        }
+        currentSlice = timeSlice;
+      }
+
+      if (currentTask) {
+        gantString += currentTask.id;
+        currentTask.cpuBurstNeeded -= 1;
+        currentSlice -= 1;
+
+        if (currentTask.cpuBurstNeeded === 0) {
+          currentTask.turnaroundTime = this.util.taskTurnaroundTime(counter + 1, currentTask.arrivalTime);
+          finishedTasks.push(currentTask);
+          currentTask = null;
+        } else if (currentSlice === 0) {
+          currentTask.shift.push(counter + 1);
+          queue.push(currentTask);
+          currentTask = null;
+        }
+      } else {
+        gantString += "-";
+      }
+
+      // Update waiting time for all tasks in the queue
+
+      counter += 1; // Increment counter regardless of tasks
+    }
+
+    let gs = this.printer.gantPrinter(gantString);
+    let ta = this.printer.turnaroundPrinter(taskList);
+    let wt = this.printer.waitingTimePrinter(taskList);
+    let tl = finishedTasks;
+
+    counter = 0;
+    this.revertCpuBurst(taskList);
+
+    console.log(gs)
+
+    return {
+      gantString: gs,
+      ta: ta,
+      wt: wt,
+      taskList: tl,
+    };
+  }
+
 
   revertCpuBurst(taskList) {
     for (let task of taskList) {
@@ -310,7 +380,7 @@ class Algorithm {
 
   addToQueue(taskList, counter, queue) {
     let addedTasks = [];
-    while (taskList.length > 0 && taskList[0].arrivalTime == counter) {
+    while (taskList.length > 0 && taskList[0].arrivalTime <= counter) {
       addedTasks.push(taskList.shift());
     }
     if (addedTasks.length > 0) {
@@ -335,11 +405,12 @@ class Algorithm {
     }
     return [currentTask, finishedTasks];
   }
-
 }
+
+
 module.exports = {
   Task,
   AlgoUtil,
   AlgoPrinter,
-  Algorithm
+  Algorithm,
 };
