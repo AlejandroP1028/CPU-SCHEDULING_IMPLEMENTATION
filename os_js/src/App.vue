@@ -2,7 +2,18 @@
   <div class="overflow-auto w-screen h-screen bg-gray-50 dark:bg-gray-900">
     <div class="flex flex-row my-8 mx-64">
       <h1 v-if="taskTitle" class="text-xl text-white font-bold">Algorithm Chosen: {{ taskTitle }}</h1>
-      <div class="ml-auto w-40 bg-black-200">
+
+      <div class="ml-auto flex flex-row items-center">
+        <div v-if="taskTitle === 'Round Robin'" class="flex flex-row mr-4 items-center">
+          <label for="quantum" class="text-white">Time Slice:</label>
+          <input 
+            type="number" 
+            id="quantum" 
+            v-model.number="timeQuantum" 
+            class="ml-2 p-1 rounded w-12 bg-gray-600 text-white"
+            min="1"
+          />
+        </div>
         <dropdown
           buttonText="Algorithms"
           menuWidth="w-48" 
@@ -13,16 +24,6 @@
     </div>
     
     <!-- Number input for time quantum of Round Robin, only show if the taskTitle is 'Round Robin' -->
-    <div v-if="taskTitle === 'Round Robin'" class="flex flex-row my-8 mx-64">
-      <label for="quantum" class="text-white">Time Quantum:</label>
-      <input 
-        type="number" 
-        id="quantum" 
-        v-model.number="timeQuantum" 
-        class="ml-2 p-1 rounded"
-        min="1"
-      />
-    </div>
 
     <div :class="taskTitle ? '' : 'pointer-events-none opacity-50'" class="flex flex-row space-x-4 my-8 mx-64 p-4 bg-gray-700 rounded-lg overflow-x-auto">
       <addTask :click="addTask" class="ml-4 order-last" />
@@ -34,6 +35,7 @@
           @task-finished="handleTaskFinished"
           @task-edit="handleEdit"
           @task-deleted="onTaskDeleted"
+          @check-duplicate="checkDuplicate"
         />
       </transition-group>
     </div>
@@ -66,6 +68,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import taskComponent from './components/taskComponent.vue';
 import addTask from './components/addTask.vue';
@@ -105,7 +108,7 @@ export default {
     };
   },
   methods: {
-    handleListItemClick(item){
+    handleListItemClick(item) {
       this.taskTitle = item.label;
       this.gantInfo = [];
     },
@@ -182,10 +185,15 @@ export default {
     createTask(id, arrivalTime, cpuBurst) {
       let task = new Task(id, arrivalTime, cpuBurst);
       this.finalTask.push(task);
+    },
+    checkDuplicate(task, callback) {
+      const isDuplicate = this.finishedTasks.some(t => t.id === task.id);
+      callback(isDuplicate);
     }
   }
 };
 </script>
+
 <style scoped>
 /* Custom scrollbar for the horizontal task container */
 ::-webkit-scrollbar {

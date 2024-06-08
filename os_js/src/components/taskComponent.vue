@@ -23,6 +23,7 @@
         <label for="arrival_time" class="block mb-2 text-sm font-medium text-white">Arrival Time:</label>
         <input 
           type="number" 
+          min="0"
           name="arrival_time" 
           class="bg-gray-700 text-white text-sm rounded-lg block w-full p-2.5" 
           v-model.number="arrivalTime" 
@@ -33,6 +34,7 @@
         <input 
           type="number" 
           name="burst_time" 
+          min="1"
           class="bg-gray-700 text-white text-sm rounded-lg block w-full p-2.5" 
           v-model.number="cpuBurst" 
         />
@@ -40,6 +42,7 @@
       <div class="mt-4 flex justify-center">
         <button type="button" @click="checkFinished" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">Submit</button>
       </div>
+      <div v-if="error" class="text-red-500 mt-2">{{ error }}</div>
     </div>
     <div v-else>
       <div class="mt-6">
@@ -79,28 +82,38 @@ export default {
       arrivalTime: 0,
       cpuBurst: 0,
       finished: false,
-      deleted: false
+      deleted: false,
+      error: ''
     };
+  },
+  watch: {
+    id(newVal) {
+      this.id = newVal.toUpperCase();
+    }
   },
   methods: {
     checkFinished() {
       this.finished = this.id && this.arrivalTime >= 0 && this.cpuBurst >= 1;
       if (this.finished) {
-        this.$emit('task-finished', { id: this.id, arrivalTime: this.arrivalTime, cpuBurst: this.cpuBurst });
+        this.$emit('check-duplicate', { id: this.id }, isDuplicate => {
+          if (isDuplicate) {
+            this.error = 'Duplicate Task ID';
+            this.finished = false;
+          } else {
+            this.error = '';
+            this.$emit('task-finished', { id: this.id, arrivalTime: this.arrivalTime, cpuBurst: this.cpuBurst });
+          }
+        });
       }
     },
     edit() {
       this.finished = !this.finished;
       this.$emit('task-edit', { id: this.id, arrivalTime: this.arrivalTime, cpuBurst: this.cpuBurst });
     },
-    deleteDiv(){
-      this.$emit('task-deleted',this.taskid)
+    deleteDiv() {
+      this.$emit('task-deleted', this.taskid);
       this.deleted = !this.deleted;
     }
   },
 };
 </script>
-
-<style scoped>
-/* Add any scoped styles if needed */
-</style>
