@@ -4,12 +4,15 @@
         <button @click="toggleDropdown" 
         :class="[buttonClasses, { 'cursor-not-allowed opacity-50': disabled }]" 
         :disabled="disabled" 
-        type="button">
-          {{ buttonText }}
-          <svg class="inline-block ml-2" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7 10l5 5 5-5H7z" fill="currentColor"/>
-          </svg>
-        </button>
+        type="button"
+        class="text-white border-white">
+  {{ buttonText }}
+  <svg class="inline-block ml-2" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7 10l5 5 5-5H7z" fill="currentColor"/>
+  </svg>
+</button>
+
+
       </div>
       <transition :name="[this.menuAlignment === 'center' ? 'center' : 'v']">
         <div v-if="show" :class="dropdownClasses">
@@ -120,38 +123,15 @@
         }
       },
       buttonClasses() {
-        const styleClasses = {
-          default: {
-            bgClass: 'dark:bg-blue-600 dark:text-blue-100 dark:hover:bg-blue-700 bg-blue-500 text-blue-100 hover:bg-blue-600',
-            borderClass: this.bordered ? 'border border-blue-100' : '',
-          },
-          sky: {
-            bgClass: 'dark:bg-sky-600 dark:text-sky-100 dark:hover:bg-sky-700 bg-sky-500 text-sky-100 hover:bg-sky-600',
-            borderClass: this.bordered ? 'border border-sky-100' : '',
-          },
-          cyan: {
-            bgClass: 'dark:bg-cyan-600 dark:text-cyan-100 dark:hover:bg-cyan-700 bg-cyan-500 text-cyan-100 hover:bg-cyan-600',
-            borderClass: this.bordered ? 'border border-cyan-100' : '',
-          },
-          teal: {
-            bgClass: 'dark:bg-teal-600 dark:text-teal-100 dark:hover:bg-teal-700 bg-teal-500 text-teal-100 hover:bg-teal-600',
-            borderClass: this.bordered ? 'border border-teal-100' : '',
-          }
-        };
-
-        const { bgClass, borderClass } = styleClasses[this.type] || styleClasses['default'];
-
         return [
-          'inline-flex justify-center w-full rounded-md shadow-sm px-4 py-2 font-medium focus:outline-none',
-          bgClass,
-          borderClass,
+          'inline-flex justify-center w-full rounded-2xl shadow-none px-4 py-2 font-medium focus:outline-none border-2 border-white',
           this.sizeClass
         ];
       },
       dropdownClasses() {
         const styleClasses = {
           default: {
-            bgClass: 'dark:bg-gray-500 dark:text-blue-100 bg-blue-100 text-blue-800',
+            bgClass: 'dark:bg-gray-700 dark:text-blue-100 bg-blue-100 text-blue-800',
             borderClass: this.bordered ? 'border border-blue-300' : '',
           },
           sky: {
@@ -198,7 +178,7 @@
       setDivider(a) {
         const styleClasses = {
           default: {
-            borderClass: 'dark:border-gray-400 border-blue-300/[.87]',
+            borderClass: 'dark:border-blue-300/[.87] border-blue-300/[.87]',
           },
           sky: {
             borderClass: 'dark:border-sky-300/[.87] border-sky-300/[.87]',
@@ -210,9 +190,9 @@
             borderClass: 'dark:border-teal-300/[.87] border-teal-300/[.87]',
           }
         };
-
+  
         const { borderClass } = styleClasses[this.type] || styleClasses['default'];
-
+  
         return [
           'border-t-2',
           borderClass,
@@ -239,26 +219,28 @@
       }
     }
   }
-</script>
-<style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-  transform: translateY(-5%);
-}
-.center-enter-active,
-.center-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.center-enter-from,
-.center-leave-to {
-  opacity: 0;
-  transform: translateY(-50%,-5%);
-}
-</style>
+  </script>
+  
+  <style scoped>
+  .v-enter-active,
+  .v-leave-active {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  
+  .v-enter-from,
+  .v-leave-to {
+    opacity: 0;
+    transform: translateY(-5%);
+  }
+  .center-enter-active,
+  .center-leave-active {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  
+  .center-enter-from,
+  .center-leave-to {
+    opacity: 0;
+    transform: translateY(-50%,-5%);
+  }
+  </style>
+  
