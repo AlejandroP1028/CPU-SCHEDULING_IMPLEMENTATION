@@ -1,52 +1,76 @@
 <template>
-  <div class="overflow-auto w-screen h-screen bg-gray-50">
-    <div class="flex flex-row space-x-4 my-8 mx-64 p-4 bg-white rounded-lg border-4 border-gray-900 overflow-x-auto">
-    <addTask :click="addTask" class="ml-4 order-last" />
-    <transition-group name="task" tag="div" class="flex flex-row space-x-4">
-      <taskComponent 
-        v-for="(task, i) in tasks" 
-        :key="task" 
-        :taskid="i"
-        @task-finished="handleTaskFinished"
-        @task-edit="handleEdit"
-        @task-deleted="onTaskDeleted"
-      />
-    </transition-group>
-  </div>
-  <div class="my-8 mx-64 p-4 h-24 flex flex-row justify-end">
-    <div>
-      <button type="button" @click="checkFinished" class="text-white bg-gray-800 hover:bg-gray-600 font-medium rounded-xl text-xl px-10 py-5 transition-colors duration-300 ease">EXECUTE</button>
-    </div>
-  </div>
-  <div v-if="gantInfo.length > 0" class="flex flex-col h-[500px] space-y-4 my-8 mx-64 rounded-md  shadow-lg border-4 border-gray-900 p-4">
-    
-    <div class="flex h-1/2 flex-col justify-center items-center">
-      <h1 class="text-3xl font-bold mb-4">{{algo}}</h1>
-      <h1 class="text-3xl font-bold mb-8">Gantt Chart</h1>
-
-      <div class="h-1/2 w-3/4 flex flex-row divide-x-4 border rounded-full border-gray-900">
-        <chartChild 
-          v-for="(i, index) in gantInfo" 
-          :key="index"
-          :label="i[1]"
-          :length="i[0]"
-          :color="index % 2 === 0 ? 'bg-gray-200' : 'bg-gray-300'"
-          :total = "totalLen"
-          :first = "index === 0 ? true : false"
-          :last = "index === (gantInfo.length - 1) ? true : false"
+  <div class="overflow-auto w-screen h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="flex flex-row my-8 mx-64">
+      <h1 v-if="taskTitle" class="text-xl text-white font-bold">Algorithm Chosen: {{ taskTitle }}</h1>
+      <div class="ml-auto w-40 bg-black-200">
+        <dropdown
+          buttonText="Algorithms"
+          menuWidth="w-48" 
+          :menuItems="menuItems" 
+          @list-item-click="handleListItemClick"
         />
       </div>
     </div>
-    <div class="flex h-1/2 "></div>
-  </div>
-  </div>
-  
-</template>
+    
+    <!-- Number input for time quantum of Round Robin, only show if the taskTitle is 'Round Robin' -->
+    <div v-if="taskTitle === 'Round Robin'" class="flex flex-row my-8 mx-64">
+      <label for="quantum" class="text-white">Time Quantum:</label>
+      <input 
+        type="number" 
+        id="quantum" 
+        v-model.number="timeQuantum" 
+        class="ml-2 p-1 rounded"
+        min="1"
+      />
+    </div>
 
+    <div :class="taskTitle ? '' : 'pointer-events-none opacity-50'" class="flex flex-row space-x-4 my-8 mx-64 p-4 bg-gray-700 rounded-lg overflow-x-auto">
+      <addTask :click="addTask" class="ml-4 order-last" />
+      <transition-group name="task" tag="div" class="flex flex-row space-x-4">
+        <taskComponent 
+          v-for="(task, i) in tasks" 
+          :key="task" 
+          :taskid="i"
+          @task-finished="handleTaskFinished"
+          @task-edit="handleEdit"
+          @task-deleted="onTaskDeleted"
+        />
+      </transition-group>
+    </div>
+
+    <div class="my-8 mx-64 p-4 h-24 flex flex-row justify-end">
+      <div>
+        <button type="button" @click="checkFinished" class="text-white bg-gray-600 hover:bg-gray-600 font-medium rounded-xl text-xl px-10 py-5 transition-colors duration-300 ease">EXECUTE</button>
+      </div>
+    </div>
+    
+    <div v-if="gantInfo.length > 0" class="flex flex-col h-[500px] space-y-4 my-8 mx-64 rounded-md bg-gray-700 shadow-lg p-4">
+      <div class="flex h-1/2 flex-col justify-center text-white items-center">
+        <h1 class="text-3xl font-bold mb-4">{{taskTitle}}</h1>
+        <h1 class="text-3xl font-bold mb-8">Gantt Chart</h1>
+        <div class="h-1/2 w-3/4 flex flex-row divide-x-4">
+          <chartChild 
+            v-for="(i, index) in gantInfo" 
+            :key="index"
+            :label="i[1]"
+            :length="i[0]"
+            :shifted="shifted[index]"
+            :color="index % 2 === 0 ? 'bg-gray-200' : 'bg-gray-300'"
+            :total="totalLen"
+            :first="index === 0 ? true : false"
+            :last="index === gantInfo.length - 1 ? true : false"
+          />
+        </div>
+      </div>
+      <div class="flex h-1/2 "></div>
+    </div>
+  </div>
+</template>
 <script>
 import taskComponent from './components/taskComponent.vue';
 import addTask from './components/addTask.vue';
 import chartChild from './components/chartChild.vue';
+import dropdown from './components/dropdown.vue';
 import { Task, Algorithm, AlgoUtil } from './cpu.js';
 
 const algo = new Algorithm();
@@ -57,10 +81,13 @@ export default {
   components: {
     taskComponent,
     addTask,
-    chartChild
+    chartChild,
+    dropdown
   },
   data() {
     return {
+      taskTitle: null,
+      shifted: null,
       tasks: [],
       finishedTasks: [],
       finalTask: [],
@@ -68,10 +95,20 @@ export default {
       totalLen: 0,
       info: null,
       counter: 0,
-      algo: 'SRTF',
+      timeQuantum: 3,  // Default value for Round Robin time quantum
+      menuItems: [
+        { label: 'First Come First Serve', type: 'default' },
+        { label: 'Shortest Process First', type: 'default' },
+        { label: 'Shortest Remaining Time First', type: 'default' },
+        { label: 'Round Robin', type: 'default' },
+      ]
     };
   },
   methods: {
+    handleListItemClick(item){
+      this.taskTitle = item.label;
+      this.gantInfo = [];
+    },
     addTask() {
       this.tasks.push(++this.counter);
     },
@@ -82,39 +119,65 @@ export default {
       this.finishedTasks.push(task);
     },
     handleEdit(updatedTask) {
-      let index = this.finishedTasks.findIndex(task => task.id == updatedTask.id);
+      let index = this.finishedTasks.findIndex(task => task.id === updatedTask.id);
       this.finishedTasks.splice(index, 1);
     },
     checkFinished() {
+      if (!this.taskTitle) return;
+      
       let num = 0;
       this.finishedTasks.forEach(task => {
         this.createTask(task.id, task.arrivalTime, task.cpuBurst);
       });
-      this.info = algo.rr(this.finalTask,3);
-      //remote tasks inside for next iteration
+
+      // Execute the selected algorithm
+      switch (this.taskTitle) {
+        case 'First Come First Serve':
+          this.info = algo.fcfs(this.finalTask);
+          break;
+        case 'Shortest Process First':
+          this.info = algo.spf(this.finalTask);
+          break;
+        case 'Shortest Remaining Time First':
+          this.info = algo.srtf(this.finalTask);
+          break;
+        case 'Round Robin':
+          this.info = algo.rr(this.finalTask, this.timeQuantum); // Use the timeQuantum for Round Robin
+          break;
+        default:
+          console.error('Unknown algorithm:', this.taskTitle);
+          return;
+      }
+
       algoU.removeTasks();
       this.finalTask = [];
 
+      this.gantInfo = this.info['gantString'].split('|').filter(s => s !== '').map(s => [s.length, this.findChar(s)]);
 
-      //get the gantinfo from info object received from algo class returns an array of array [length,char] 
-      this.gantInfo = this.info['gantString'].split('|').filter(s => s != '').map(s => [s.length, this.findChar(s)]);
+      let rtaskList = this.info['taskList'];
+      let combinedShifted = new Set([]);
 
-      //pwede mong gawin either or 
+      for (let task of rtaskList) {
+        for (let shift of task.shift) {
+          combinedShifted.add(shift);
+        }
+        for (let start of task.timeExecuted) {
+          combinedShifted.add(start);
+        }
+      }
 
-      //first:find the shifted value of sorted task from this.info['taskList']...
-      //pwede mo siyang gawan ng value pair or array of array with the id tas taskshifted tapos gawa ka bagong data attribute tas don mo istore
-      //then somehow ipapasa mo siya sa chartchild or some shit
-      console.log("tasklist",this.info['taskList'])
-
-      //second:display the waiting time and turnaround time from this.info['ta'] and this.info['wt']
-      console.log("ta",this.info['ta'])
-      console.log("wt",this.info['wt'])
+      combinedShifted = new Set([...combinedShifted].sort((a, b) => a - b));
+      
+      if (combinedShifted.has(0)) {
+        combinedShifted.delete(0);
+      }
+      this.shifted = [...combinedShifted];
 
       this.gantInfo.forEach(i => num += i[0]);
       this.totalLen = num;
     },
     findChar(string) {
-      return string[0] == '@' ? ' ' : string[Math.floor(string.length / 2)];
+      return string[0] === '@' ? ' ' : string[Math.floor(string.length / 2)];
     },
     createTask(id, arrivalTime, cpuBurst) {
       let task = new Task(id, arrivalTime, cpuBurst);
@@ -123,14 +186,13 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 /* Custom scrollbar for the horizontal task container */
 ::-webkit-scrollbar {
   height: 4px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgb(17, 24, 39);
+  background: white;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -144,5 +206,11 @@ export default {
 .task-enter, .task-leave-to /* .task-leave-active in <2.1.8 */ {
   transform: translateX(-10%);
   opacity: 0;
+}
+
+/* Disable interaction and make semi-transparent when no algorithm is selected */
+.pointer-events-none {
+  pointer-events: none;
+  opacity: 0.5;
 }
 </style>

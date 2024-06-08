@@ -1,11 +1,11 @@
 <template>
-    <div class="h-full flex relative items-center justify-center" :style="growStyle" :class="[color,borderClass]">
+    <div class="h-full flex relative items-center justify-center text-gray-900" :style="growStyle" :class="[color,borderClass]">
       <h1 class="text-xl font-bold">{{ capitalizedLabel }}</h1>
-      <div class="absolute bottom-0 right-0 translate-x-1/2 translate-y-8 p-1 z-10">
-        <h1 class="text-lg font-bold"> {{ length }}</h1>
+      <div class="absolute bottom-0 right-0 translate-x-1/2 translate-y-8 p-1 z-10 text-white">
+        <h1 class="text-md font-medium"> {{ shifted }}</h1>
       </div>
-      <div v-if="first" class="absolute bottom-0 left-0 translate-y-8 z-10">
-        <h1 class="text-lg font-bold"> 0 </h1>
+      <div v-if="first" class="absolute bottom-0 left-0 translate-y-8 z-10 text-white">
+        <h1 class="text-md font-medium"> 0 </h1>
       </div>
     </div>
   </template>
