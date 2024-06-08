@@ -199,10 +199,10 @@ class Algorithm {
     this.revertCpuBurst(taskList);
 
     return {
-        gantString: gs,
-        ta: ta,
-        wt: wt,
-        taskList: tl,
+      gantString: gs,
+      ta: ta,
+      wt: wt,
+      taskList: tl,
     };
   }
 
@@ -249,13 +249,13 @@ class Algorithm {
     this.revertCpuBurst(taskList);
 
     return {
-        gantString: gs,
-        ta: ta,
-        wt: wt,
-        taskList: tl,
+      gantString: gs,
+      ta: ta,
+      wt: wt,
+      taskList: tl,
     };
-}
-  
+  }
+
 
   srtf(taskList) {
     let counter = 0;
@@ -337,61 +337,61 @@ class Algorithm {
     let copyTaskList = [...taskList];
 
     while (finishedTasks.length !== taskList.length) {
-        // Add new tasks to the queue as they arrive
-        if (copyTaskList.length > 0) {
-            [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
-        }
+      // Add new tasks to the queue as they arrive
+      if (copyTaskList.length > 0) {
+        [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
+      }
 
-        // If no current task and queue is not empty, get the next task
-        if (!currentTask && queue.length > 0) {
-            currentTask = queue.shift();
-            currentTask.timeExecuted.push(counter);
-            if (currentTask.timeExecuted.length === 1) {
-                currentTask.waitingTime = this.util.taskWaitingTime(counter, currentTask.arrivalTime);
-            } else {
-                let waitingTimeY = currentTask.timeExecuted[currentTask.timeExecuted.length - 1] - currentTask.shift[currentTask.shift.length - 1];
-                currentTask.waitingTime += waitingTimeY;
-            }
-            currentSlice = timeSlice;
-        }
-
-        // Process the current task if it exists
-        if (currentTask) {
-            gantString += currentTask.id;
-            currentTask.cpuBurstNeeded -= 1;
-            currentSlice -= 1;
-
-            // If current task finishes, calculate turnaround time and remove it
-            if (currentTask.cpuBurstNeeded === 0) {
-                currentTask.turnaroundTime = this.util.taskTurnaroundTime(counter + 1, currentTask.arrivalTime);
-                gantString += '|'
-                currentTask.shift.push(counter + 1);
-                finishedTasks.push(currentTask);
-                currentTask = null;
-                currentSlice = timeSlice;
-            } else if (currentSlice === 0) {
-                // If time slice is over, put task back in queue and reset slice
-                bol = true
-                gantString += '|'
-                counter += 1
-                currentTask.shift.push(counter);
-                [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
-                queue.push(currentTask);
-                currentTask = null;
-                currentSlice = timeSlice;
-            }
+      // If no current task and queue is not empty, get the next task
+      if (!currentTask && queue.length > 0) {
+        currentTask = queue.shift();
+        currentTask.timeExecuted.push(counter);
+        if (currentTask.timeExecuted.length === 1) {
+          currentTask.waitingTime = this.util.taskWaitingTime(counter, currentTask.arrivalTime);
         } else {
-            gantString += "-";
+          let waitingTimeY = currentTask.timeExecuted[currentTask.timeExecuted.length - 1] - currentTask.shift[currentTask.shift.length - 1];
+          currentTask.waitingTime += waitingTimeY;
         }
+        currentSlice = timeSlice;
+      }
 
-        // Update waiting time for all tasks in the queue
-        if (!bol){
+      // Process the current task if it exists
+      if (currentTask) {
+        gantString += currentTask.id;
+        currentTask.cpuBurstNeeded -= 1;
+        currentSlice -= 1;
 
-          counter += 1;
+        // If current task finishes, calculate turnaround time and remove it
+        if (currentTask.cpuBurstNeeded === 0) {
+          currentTask.turnaroundTime = this.util.taskTurnaroundTime(counter + 1, currentTask.arrivalTime);
+          gantString += '|'
+          currentTask.shift.push(counter + 1);
+          finishedTasks.push(currentTask);
+          currentTask = null;
+          currentSlice = timeSlice;
+        } else if (currentSlice === 0) {
+          // If time slice is over, put task back in queue and reset slice
+          bol = true
+          gantString += '|'
+          counter += 1
+          currentTask.shift.push(counter);
+          [queue, copyTaskList] = this.addToQueue(copyTaskList, counter, queue);
+          queue.push(currentTask);
+          currentTask = null;
+          currentSlice = timeSlice;
         }
+      } else {
+        gantString += "-";
+      }
 
-        bol = false
-         // Increment counter regardless of tasks
+      // Update waiting time for all tasks in the queue
+      if (!bol) {
+
+        counter += 1;
+      }
+
+      bol = false
+      // Increment counter regardless of tasks
     }
 
     let gs = this.printer.gantPrinter(gantString);
@@ -403,13 +403,13 @@ class Algorithm {
     this.revertCpuBurst(taskList);
 
     return {
-        gantString: gs,
-        gs: gantString,
-        ta: ta,
-        wt: wt,
-        taskList: tl,
+      gantString: gs,
+      gs: gantString,
+      ta: ta,
+      wt: wt,
+      taskList: tl,
     };
-}
+  }
 
 
 
@@ -423,10 +423,10 @@ class Algorithm {
 
   addToQueue(taskList, counter, queue) {
     while (taskList.length > 0 && taskList[0].arrivalTime <= counter) {
-        queue.push(taskList.shift());
+      queue.push(taskList.shift());
     }
     return [queue, taskList];
-}
+  }
 
 
   checkFirstInQueue(queue, counter) {
