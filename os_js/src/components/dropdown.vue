@@ -151,7 +151,7 @@
       dropdownClasses() {
         const styleClasses = {
           default: {
-            bgClass: 'dark:bg-gray-700 dark:text-blue-100 bg-blue-100 text-blue-800',
+            bgClass: 'dark:bg-gray-500 dark:text-blue-100 bg-blue-100 text-blue-800',
             borderClass: this.bordered ? 'border border-blue-300' : '',
           },
           sky: {
@@ -198,7 +198,7 @@
       setDivider(a) {
         const styleClasses = {
           default: {
-            borderClass: 'dark:border-blue-300/[.87] border-blue-300/[.87]',
+            borderClass: 'dark:border-gray-400 border-blue-300/[.87]',
           },
           sky: {
             borderClass: 'dark:border-sky-300/[.87] border-sky-300/[.87]',

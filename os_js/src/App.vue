@@ -18,6 +18,7 @@
           buttonText="Algorithms"
           menuWidth="w-48" 
           :menuItems="menuItems" 
+          :divider="true"
           @list-item-click="handleListItemClick"
         />
       </div>
