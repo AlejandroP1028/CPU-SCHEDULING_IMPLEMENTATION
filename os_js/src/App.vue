@@ -1,11 +1,11 @@
 <template>
-  <div class="overflow-auto w-screen h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="overflow-auto w-screen h-screen dark:bg-gray-900" style="background-color: #47475c;">
     <div class="flex flex-row my-8 mx-64">
-      <h1 v-if="taskTitle" class="text-xl text-white font-bold">Algorithm Chosen: {{ taskTitle }}</h1>
+      <h1 v-if="taskTitle" class="text-xl text-white font-bold" style="font-family: 'Gabarito', sans-serif;">Algorithm Chosen: {{ taskTitle }}</h1>
 
       <div class="ml-auto flex flex-row items-center">
         <div v-if="taskTitle === 'Round Robin'" class="flex flex-row mr-4 items-center">
-          <label for="quantum" class="text-white">Time Slice:</label>
+          <label for="quantum" class="text-white" style="font-family: 'Gabarito', sans-serif;">Time Slice:</label>
           <input 
             type="number" 
             id="quantum" 
@@ -15,10 +15,9 @@
           />
         </div>
         <dropdown
-          buttonText="Algorithms"
+          buttonText="Choose an Algorithm"
           menuWidth="w-48" 
           :menuItems="menuItems" 
-          :divider="true"
           @list-item-click="handleListItemClick"
         />
       </div>
@@ -43,15 +42,17 @@
 
     <div class="my-8 mx-64 p-4 h-24 flex flex-row justify-end">
       <div>
-        <button type="button" @click="checkFinished" class="text-white bg-gray-600 hover:bg-gray-600 font-medium rounded-xl text-xl px-10 py-5 transition-colors duration-300 ease">EXECUTE</button>
+        <button type="button" @click="checkFinished" class="text-white bg-gray-800 hover:bg-gray-600 font-bold rounded-3xl text-xl px-12 py-3 transition-colors duration-300 ease pulse" style="filter: drop-shadow(0px 1px 4px rgba(255, 255,255, 0.8));font-family: 'Gabarito', sans-serif;">Execute</button>
+
+
       </div>
     </div>
     
-    <div v-if="gantInfo.length > 0" class="flex flex-col h-[500px] space-y-4 my-8 mx-64 rounded-md bg-gray-700 shadow-lg p-4">
+    <div v-if="gantInfo.length > 0" class="flex flex-col h-[500px] space-y-4 my-8 mx-64 mt-8 rounded-lg bg-gray-700 shadow-lg p-4">
       <div class="flex h-1/2 flex-col justify-center text-white items-center">
-        <h1 class="text-3xl font-bold mb-4">{{taskTitle}}</h1>
-        <h1 class="text-3xl font-bold mb-8">Gantt Chart</h1>
-        <div class="h-1/2 w-3/4 flex flex-row divide-x-4">
+        <h1 class="text-3xl font-bold mt-20 mb-4" style="font-family: 'Gabarito', sans-serif;">{{taskTitle}}</h1>
+        <h1 class="text-3xl font-bold mb-8" style="font-family: 'Gabarito', sans-serif;">Gantt Chart</h1>
+        <div class="h-1/2 w-3/4 mt-20 flex flex-row divide-x-4">
           <chartChild 
             v-for="(i, index) in gantInfo" 
             :key="index"
@@ -66,6 +67,38 @@
         </div>
       </div>
       <div class="flex h-1/2 "></div>
+    </div>
+
+    <div v-if="info && info.taskList" class="flex flex-col my-8 mx-64 rounded-md bg-gray-700 shadow-lg p-4 text-white">
+      <h2 class="text-2xl font-bold mb-4" style="font-family: 'Gabarito', sans-serif;">Task Information</h2>
+      <table class="table-auto w-full text-left">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">Task ID</th>
+            <th class="px-4 py-2">Arrival Time</th>
+            <th class="px-4 py-2">Burst Time</th>
+            <th class="px-4 py-2">Waiting Time</th>
+            <th class="px-4 py-2">Turnaround Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="task in info.taskList" :key="task.id">
+            <td class="border px-4 py-2">{{ task.id }}</td>
+            <td class="border px-4 py-2">{{ task.arrivalTime }}</td>
+            <td class="border px-4 py-2">{{ task.cpuBurst }}</td>
+            <td class="border px-4 py-2">{{ task.waitingTime }}</td>
+            <td class="border px-4 py-2">{{ task.turnaroundTime }}</td>
+          </tr>
+        </tbody>
+
+        <tfoot>
+          <tr>
+            <td colspan="3"></td>
+            <td class="border px-4 py-2">{{ averageWaitingTime.toFixed(2) }}</td>
+            <td class="border px-4 py-2">{{ averageTurnaroundTime.toFixed(2) }}</td>
+          </tr>
+        </tfoot>
+      </table>
     </div>
   </div>
 </template>
@@ -105,7 +138,9 @@ export default {
         { label: 'Shortest Process First', type: 'default' },
         { label: 'Shortest Remaining Time First', type: 'default' },
         { label: 'Round Robin', type: 'default' },
-      ]
+      ],
+      averageWaitingTime: 0,
+      averageTurnaroundTime: 0,
     };
   },
   methods: {
@@ -129,7 +164,6 @@ export default {
     checkFinished() {
       if (!this.taskTitle) return;
       
-      let num = 0;
       this.finishedTasks.forEach(task => {
         this.createTask(task.id, task.arrivalTime, task.cpuBurst);
       });
@@ -157,6 +191,10 @@ export default {
       this.finalTask = [];
 
       this.gantInfo = this.info['gantString'].split('|').filter(s => s !== '').map(s => [s.length, this.findChar(s)]);
+      let waitingTimes = this.info.taskList.map(task => task.waitingTime);
+      let turnaroundTimes = this.info.taskList.map(task => task.turnaroundTime);
+      this.averageWaitingTime = algoU.avg(waitingTimes);
+      this.averageTurnaroundTime = algoU.avg(turnaroundTimes);
 
       let rtaskList = this.info['taskList'];
       let combinedShifted = new Set([]);
@@ -177,7 +215,7 @@ export default {
       }
       this.shifted = [...combinedShifted];
 
-      this.gantInfo.forEach(i => num += i[0]);
+      let num = this.gantInfo.reduce((accumulator, currentValue) => accumulator + currentValue[0], 0);
       this.totalLen = num;
     },
     findChar(string) {
@@ -195,31 +233,39 @@ export default {
 };
 </script>
 
+
+
 <style scoped>
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation: pulse 1.5s infinite;
+}
+@import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap');
 /* Custom scrollbar for the horizontal task container */
 ::-webkit-scrollbar {
   height: 4px;
 }
 ::-webkit-scrollbar-thumb {
-  background: white;
-  border-radius: 4px;
+  background: #a0aec0;
+  border-radius: 2px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgb(55, 66, 99);
-}
-
-/* Add animations */
 .task-enter-active, .task-leave-active {
-  transition: all 0.5s ease;
+  transition: all 1s ease;
 }
 .task-enter, .task-leave-to /* .task-leave-active in <2.1.8 */ {
-  transform: translateX(-10%);
   opacity: 0;
-}
-
-/* Disable interaction and make semi-transparent when no algorithm is selected */
-.pointer-events-none {
-  pointer-events: none;
-  opacity: 0.5;
+  transform: translateX(30px);
 }
 </style>
