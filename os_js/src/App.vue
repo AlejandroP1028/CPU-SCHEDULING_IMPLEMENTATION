@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-auto w-screen h-screen dark:bg-gray-900" style="background-color: #47475c;">
+  <div class="overflow-auto w-screen h-screen dark:bg-gray-900">
     <div class="flex flex-row my-8 mx-64">
       <h1 v-if="taskTitle" class="text-xl text-white font-bold" style="font-family: 'Gabarito', sans-serif;">Algorithm Chosen: {{ taskTitle }}</h1>
 
@@ -48,11 +48,11 @@
       </div>
     </div>
     
-    <div v-if="gantInfo.length > 0" class="flex flex-col h-[500px] space-y-4 my-8 mx-64 mt-8 rounded-lg bg-gray-700 shadow-lg p-4">
-      <div class="flex h-1/2 flex-col justify-center text-white items-center">
-        <h1 class="text-3xl font-bold mt-20 mb-4" style="font-family: 'Gabarito', sans-serif;">{{taskTitle}}</h1>
-        <h1 class="text-3xl font-bold mb-8" style="font-family: 'Gabarito', sans-serif;">Gantt Chart</h1>
-        <div class="h-1/2 w-3/4 mt-20 flex flex-row divide-x-4">
+    <div v-if="gantInfo.length > 0" class="flex flex-col h-[300px] space-y-4 my-8 mx-64 mt-8 rounded-lg bg-gray-700 shadow-lg p-4">
+      <div class="flex h-full flex-col text-white items-center">
+        <h1 class="text-3xl font-bold mt-6 " style="font-family: 'Gabarito', sans-serif;">{{taskTitle}}</h1>
+        <h1 class="text-3xl font-bold mb-12 " style="font-family: 'Gabarito', sans-serif;">Gantt Chart</h1>
+        <div class="h-2/6 w-3/4 flex flex-row justify-self-center divide-x-4">
           <chartChild 
             v-for="(i, index) in gantInfo" 
             :key="index"
@@ -66,11 +66,10 @@
           />
         </div>
       </div>
-      <div class="flex h-1/2 "></div>
     </div>
 
     <div v-if="info && info.taskList" class="flex flex-col my-8 mx-64 rounded-md bg-gray-700 shadow-lg p-4 text-white">
-      <h2 class="text-2xl font-bold mb-4" style="font-family: 'Gabarito', sans-serif;">Task Information</h2>
+      <h2 class="text-2xl font-bold mb-4 self-center" style="font-family: 'Gabarito', sans-serif;">Task Information</h2>
       <table class="table-auto w-full text-left">
         <thead>
           <tr>
@@ -86,16 +85,16 @@
             <td class="border px-4 py-2">{{ task.id }}</td>
             <td class="border px-4 py-2">{{ task.arrivalTime }}</td>
             <td class="border px-4 py-2">{{ task.cpuBurst }}</td>
-            <td class="border px-4 py-2">{{ task.waitingTime }}</td>
-            <td class="border px-4 py-2">{{ task.turnaroundTime }}</td>
+            <td class="border px-4 py-2">{{ task.waitingTime }} m/s</td>
+            <td class="border px-4 py-2">{{ task.turnaroundTime }} m/s</td>
           </tr>
         </tbody>
 
         <tfoot>
           <tr>
             <td colspan="3"></td>
-            <td class="border px-4 py-2">{{ averageWaitingTime.toFixed(2) }}</td>
-            <td class="border px-4 py-2">{{ averageTurnaroundTime.toFixed(2) }}</td>
+            <td class="border px-4 py-2">{{ averageWaitingTime.toFixed(2) }} m/s</td>
+            <td class="border px-4 py-2">{{ averageTurnaroundTime.toFixed(2) }} m/s</td>
           </tr>
         </tfoot>
       </table>
@@ -147,6 +146,7 @@ export default {
     handleListItemClick(item) {
       this.taskTitle = item.label;
       this.gantInfo = [];
+      this.info = null
     },
     addTask() {
       this.tasks.push(++this.counter);
@@ -239,13 +239,13 @@ export default {
 
 @keyframes pulse {
   0% {
-    transform: scale(1);
+    transform: scale(.97);
   }
   50% {
-    transform: scale(1.1);
+    transform: scale(1);
   }
   100% {
-    transform: scale(1);
+    transform: scale(.97);
   }
 }
 
