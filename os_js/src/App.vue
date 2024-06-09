@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-auto w-screen h-screen dark:bg-gray-900">
+  <div class="overflow-auto w-screen h-screen bg-gray-900">
     <div class="flex flex-row my-8 mx-64">
       <h1 v-if="taskTitle" class="text-xl text-white font-bold" style="font-family: 'Gabarito', sans-serif;">Algorithm Chosen: {{ taskTitle }}</h1>
 
