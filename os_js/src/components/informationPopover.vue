@@ -30,10 +30,10 @@
       :style="popoverStyle"
     >
       <h3
-        class="text-lg font-semibold mb-2 dark:text-amber-400"
+        class="text-lg font-semibold mb-2 text-amber-400"
         v-html="popoverTitle"
       ></h3>
-      <p class="text-gray-600 dark:text-white" v-html="popoverContent"></p>
+      <p class="text-white" v-html="popoverContent"></p>
     </div>
   </div>
 </template>
