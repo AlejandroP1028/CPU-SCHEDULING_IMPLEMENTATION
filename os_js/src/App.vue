@@ -3,10 +3,10 @@
     <div class="flex flex-row my-8 mx-64">
       <h1
         v-if="taskTitle"
-        class="text-xl text-white font-bold"
+        class="text-xl text-amber-400 font-bold"
         style="font-family: 'Gabarito', sans-serif"
       >
-        Algorithm Chosen: {{ taskTitle }}
+        Algorithm Chosen: <span class="text-white">{{ taskTitle }} </span>
       </h1>
 
       <div class="ml-auto flex flex-row items-center">
@@ -77,7 +77,7 @@
       v-if="gantInfo.length > 0"
       class="flex flex-col h-[300px] space-y-4 my-8 mx-64 mt-8 rounded-lg bg-gray-700 shadow-lg p-4"
     >
-      <div class="flex h-full flex-col text-white items-center">
+      <div class="flex h-full flex-col text-amber-400 items-center">
         <h1
           class="text-3xl font-bold mt-6"
           style="font-family: 'Gabarito', sans-serif"
@@ -111,7 +111,7 @@
       class="flex flex-col my-8 mx-64 rounded-md bg-gray-700 shadow-lg p-4 text-white"
     >
       <h2
-        class="text-2xl font-bold mb-4 self-center"
+        class="text-2xl font-bold text-amber-400 mb-4 self-center"
         style="font-family: 'Gabarito', sans-serif"
       >
         Task Information

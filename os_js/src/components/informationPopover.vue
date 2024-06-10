@@ -30,7 +30,7 @@
       :style="popoverStyle"
     >
       <h3
-        class="text-lg font-semibold mb-2 dark:text-white"
+        class="text-lg font-semibold mb-2 dark:text-amber-400"
         v-html="popoverTitle"
       ></h3>
       <p class="text-gray-600 dark:text-white" v-html="popoverContent"></p>
@@ -148,7 +148,7 @@ export default {
     popoverColorClass() {
       return {
         blue: "bg-blue-100 dark:bg-blue-900",
-        slate: "bg-slate-200 dark:bg-slate-200",
+        slate: "bg-slate-800 dark:bg-slate-800",
         teal: "bg-teal-200 dark:bg-teal-900",
         cyan: "bg-cyan-200 dark:bg-cyan-900",
         sky: "bg-sky-200 dark:bg-sky-900",
