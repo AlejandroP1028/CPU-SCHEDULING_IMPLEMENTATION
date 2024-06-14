@@ -4,17 +4,22 @@
 
 To run the project, follow these steps:
 
-1. Install the necessary dependencies:
+
+1. Navigate to the os_js folder where the project is located:
+    ```sh
+    cd os_js
+    ```
+2. Install the necessary dependencies:
     ```sh
     npm install
     ```
 
-2. Install Vue Cli:
+3. Install Vue Cli:
     ```sh
     npm install @vue-cli
     ```
 
-3. Start the development server:
+4. Start the development server:
     ```sh
     npm run serve
     ```
