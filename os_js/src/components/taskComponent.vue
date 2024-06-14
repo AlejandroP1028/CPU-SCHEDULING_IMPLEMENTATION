@@ -17,6 +17,7 @@
           name="task_id" 
           class="bg-gray-700 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
           v-model="id" 
+          maxlength="1"
         />
       </div>
       <div>
