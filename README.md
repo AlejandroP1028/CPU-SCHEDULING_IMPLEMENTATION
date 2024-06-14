@@ -23,3 +23,5 @@ To run the project, follow these steps:
     ```sh
     npm run serve
     ```
+
+### Link to [TypeScript implementation](https://github.com/AlejandroP1028/Typescript-CPU-Scheduling)

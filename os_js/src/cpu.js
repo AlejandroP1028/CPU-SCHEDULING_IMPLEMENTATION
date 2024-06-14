@@ -33,6 +33,8 @@ class Task {
   Time Executed: ${this.timeExecuted}
   Time Shifted: ${this.shift}`;
   }
+
+
 }
 
 class AlgoUtil {
@@ -43,7 +45,7 @@ class AlgoUtil {
     }
     return totalBurst;
   }
-
+  
   taskWaitingTime(timeExecuted, arrivalTime) {
     // waiting time = time executed - arrival time
     return timeExecuted - arrivalTime;
@@ -71,17 +73,25 @@ class AlgoPrinter {
   constructor() {
     this.util = new AlgoUtil();
   }
-
+  // aaabbbbcccc--ddddd
+  
   gantPrinter(gantString) {
     let finalString = "";
     let strList = [...gantString];
     let currentChar = null;
     let currentCharCount = 0;
 
+    //aaaaabbaaaa
+    //--a--|-b|--a-|@@
+    //finalstring = |--a--
+    //currentchar = b
+    //charcount = 5
+    // if 3 then char
     for (let char of strList) {
       if (currentChar === char) {
         currentCharCount += 1;
-      } else {
+      } 
+      else {
         if (currentChar) {
           finalString += "|";
           for (let x = 0; x < currentCharCount; x++) {
@@ -410,8 +420,6 @@ class Algorithm {
       taskList: tl,
     };
   }
-
-
 
 
 
